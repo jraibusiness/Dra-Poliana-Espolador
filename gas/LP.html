@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><?!= include('Estilo'); ?>
+<style>
+.envelope{max-width:640px;margin:0 auto;padding:28px 20px 0;min-height:100vh;display:flex;flex-direction:column}
+header{text-align:center;padding:16px 0 26px}
+header h1{font-size:26px;color:var(--gold)}
+header p{color:var(--texto-2);margin-top:6px;font-size:16px}
+.hero h2{font-size:22px;line-height:1.35;text-align:center;margin-bottom:14px}
+.hero p{text-align:center;color:var(--texto-2);margin-bottom:26px}
+.progresso{height:4px;background:var(--borda);border-radius:99px;margin:6px 0 26px;overflow:hidden}
+.progresso div{height:100%;background:var(--gold);width:0;transition:width .35s ease}
+.tela{display:none;animation:surge .3s ease}
+.tela.ativa{display:block}
+@keyframes surge{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pergunta{font-family:var(--font-display);font-size:20px;margin-bottom:18px}
+.opcao{display:block;width:100%;text-align:left;padding:15px 16px;margin-bottom:10px;background:var(--card);
+  color:var(--texto);border:1px solid var(--borda);border-radius:var(--raio);font-size:17px}
+.opcao.sel{border-color:var(--gold);background:var(--gold-suave)}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:22px}
+.dica{color:var(--texto-2);font-size:14.5px;margin-top:8px}
+.janela-linha{display:flex;gap:8px;margin-bottom:10px}
+.janela-linha input{flex:1}
+.fim{text-align:center;padding:40px 0}
+.fim h2{color:var(--gold);margin-bottom:12px}
+footer{margin-top:auto}
+</style></head>
+<body>
+<div class="envelope">
+  <header>
+    <h1 id="nomeAdv">Dra. Poliana Espolador</h1>
+    <p>Advocacia Previdenciária · Curitiba/PR</p>
+  </header>
+
+  <!-- ACOLHIMENTO -->
+  <section id="hero" class="hero">
+    <h2>Você foi indicado — e isso, para mim, é o maior sinal de confiança.</h2>
+    <p>A Dra. Poliana terá grande alegria em atender você. Para que a primeira conversa já comece
+       com o seu caso compreendido, responda algumas perguntas rápidas. Leva menos de 3 minutos,
+       e nada aqui é compromisso.</p>
+    <button class="btn" style="width:100%" onclick="iniciar()">Começar</button>
+    <p class="dica" style="text-align:center;margin-top:12px">Sem cadastro, sem senha, sem custo.</p>
+  </section>
+
+  <!-- FORMULÁRIO -->
+  <section id="form" class="oculto">
+    <div class="progresso"><div id="barra"></div></div>
+
+    <div class="tela" data-t="0">
+      <p class="pergunta">Como você prefere ser chamado(a)?</p>
+      <input id="f_nome" placeholder="Seu nome completo" autocomplete="name">
+    </div>
+
+    <div class="tela" data-t="1">
+      <p class="pergunta">Qual o melhor WhatsApp para falar com você?</p>
+      <input id="f_telefone" placeholder="(41) 9 9999-9999" inputmode="tel" autocomplete="tel">
+      <p class="dica">É por ele que a Dra. Poliana confirma a conversa.</p>
+    </div>
+
+    <div class="tela" data-t="2">
+      <p class="pergunta">E o seu e-mail?</p>
+      <input id="f_email" placeholder="voce@email.com" inputmode="email" autocomplete="email">
+    </div>
+
+    <div class="tela" data-t="3">
+      <p class="pergunta">Em qual cidade você mora?</p>
+      <input id="f_cidade" placeholder="Curitiba, Colombo, Pinhais...">
+    </div>
+
+    <div class="tela" data-t="4">
+      <p class="pergunta">Como você chegou até aqui?</p>
+      <div id="g_origem"></div>
+      <input id="f_quem_indicou" class="oculto" placeholder="Quem indicou? (se quiser contar, ela agradece 🙂)" style="margin-top:10px">
+    </div>
+
+    <div class="tela" data-t="5">
+      <p class="pergunta">O assunto é sobre qual benefício?</p>
+      <div id="g_beneficio"></div>
+    </div>
+
+    <div class="tela" data-t="6">
+      <p class="pergunta">Qual dessas frases descreve melhor a sua situação?</p>
+      <div id="g_situacao"></div>
+    </div>
+
+    <div class="tela" data-t="7">
+      <p class="pergunta">Sobre os documentos do caso…</p>
+      <div id="g_docs"></div>
+      <p class="dica">Não se preocupe se não tiver nada — faz parte, e existe caminho.</p>
+    </div>
+
+    <div class="tela" data-t="8">
+      <p class="pergunta">E quanto à urgência?</p>
+      <div id="g_urgencia"></div>
+    </div>
+
+    <div class="tela" data-t="9">
+      <p class="pergunta">Conte, com suas palavras, o que aconteceu.</p>
+      <textarea id="f_relato" rows="6" placeholder="Escreva como se estivesse conversando. Quanto mais detalhes, melhor a Dra. Poliana chega na conversa com você."></textarea>
+    </div>
+
+    <div class="tela" data-t="10">
+      <p class="pergunta">Para terminar: sugira 3 dias e horários que ficam bons para você.</p>
+      <p class="dica" style="margin-bottom:12px">A Dra. Poliana escolhe um deles e confirma no seu WhatsApp.</p>
+      <div class="janela-linha"><input type="date" id="d1"><input type="time" id="h1"></div>
+      <div class="janela-linha"><input type="date" id="d2"><input type="time" id="h2"></div>
+      <div class="janela-linha"><input type="date" id="d3"><input type="time" id="h3"></div>
+      <p class="dica" id="avisoConsent">Ao enviar, você concorda que estas informações sejam usadas
+        exclusivamente para a Dra. Poliana analisar seu caso e entrar em contato.</p>
+    </div>
+
+    <div class="nav">
+      <button class="btn-fantasma" id="btVoltar" onclick="mover(-1)">Voltar</button>
+      <button class="btn" id="btAvancar" onclick="mover(1)">Avançar</button>
+    </div>
+  </section>
+
+  <!-- CONFIRMAÇÃO -->
+  <section id="fim" class="fim oculto">
+    <h2>Recebido! ✓</h2>
+    <p>Suas informações já estão com a Dra. Poliana.<br>
+       Ela vai analisar o seu caso e confirmar o horário pelo seu WhatsApp.</p>
+    <p class="dica" style="margin-top:14px">Enquanto isso, se tiver documentos do INSS guardados,
+       vá separando — sem pressa e sem organizar nada.</p>
+  </section>
+
+  <footer><div class="lgpd">🔒 <span id="lgpdTxt">Seus dados permanecem na infraestrutura do escritório,
+    protegidos nos termos da LGPD, e não são enviados a sistemas de inteligência artificial.</span></div></footer>
+</div>
+
+<script>
+const OPCOES = {
+  origem:['Indicação de alguém','Instagram','Pesquisa no Google','Outro'],
+  beneficio:['Aposentadoria por idade urbana','Aposentadoria por tempo de contribuição (híbrida)',
+    'Aposentadoria especial','Auxílio por incapacidade temporária','BPC/LOAS - Pessoa com deficiência',
+    'Pensão por morte','Auxílio-acidente','Revisão de benefício','Não sei / Outro assunto'],
+  situacao:['Nunca requeri','Requeri e foi negado','Recebo e quero revisar','Recebia e foi cessado'],
+  docs:['Tenho tudo','Tenho parte','Não tenho nada'],
+  urgencia:['Estou sem renda','Preciso resolver em breve','Sem pressa']
+};
+const R = { origem:'', beneficio:'', situacao:'', tem_documentos:'', urgencia:'' };
+let tela = 0;
+const TOTAL = 11;
+const $ = id => document.getElementById(id);
+
+function grupo(el, lista, chave){
+  el.innerHTML = '';
+  lista.forEach(op => {
+    const b = document.createElement('button');
+    b.className = 'opcao'; b.textContent = op;
+    b.onclick = () => {
+      R[chave] = op;
+      [...el.children].forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      if (chave==='origem') $('f_quem_indicou').classList.toggle('oculto', !/Indicação/.test(op));
+      setTimeout(()=>mover(1), 220);   // fluidez: escolheu, avança
+    };
+    el.appendChild(b);
+  });
+}
+grupo($('g_origem'), OPCOES.origem, 'origem');
+grupo($('g_beneficio'), OPCOES.beneficio, 'beneficio');
+grupo($('g_situacao'), OPCOES.situacao, 'situacao');
+grupo($('g_docs'), OPCOES.docs, 'tem_documentos');
+grupo($('g_urgencia'), OPCOES.urgencia, 'urgencia');
+
+function iniciar(){ $('hero').classList.add('oculto'); $('form').classList.remove('oculto'); pinta(); }
+function pinta(){
+  document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', Number(t.dataset.t)===tela));
+  $('barra').style.width = ((tela+1)/TOTAL*100)+'%';
+  $('btVoltar').style.visibility = tela===0 ? 'hidden':'visible';
+  $('btAvancar').textContent = tela===TOTAL-1 ? 'Enviar ✓' : 'Avançar';
+  window.scrollTo({top:0});
+}
+function valida(){
+  const need = (v,msg)=>{ if(!String(v||'').trim()){ alert(msg); return false } return true };
+  switch(tela){
+    case 0: return need($('f_nome').value,'Me conta seu nome 🙂');
+    case 1: return need($('f_telefone').value,'Preciso do WhatsApp para a Dra. Poliana te responder.');
+    case 2: return need($('f_email').value,'Preciso de um e-mail válido.');
+    case 4: return need(R.origem,'Escolha uma opção.');
+    case 5: return need(R.beneficio,'Escolha uma opção — se não souber, marque a última.');
+    case 6: return need(R.situacao,'Escolha a frase mais próxima da sua situação.');
+    case 7: return need(R.tem_documentos,'Escolha uma opção.');
+    case 8: return need(R.urgencia,'Escolha uma opção.');
+    case 10: return need($('d1').value && $('h1').value,'Sugira ao menos o primeiro horário.');
+  }
+  return true;
+}
+function mover(dir){
+  if (dir>0 && !valida()) return;
+  if (tela===TOTAL-1 && dir>0) return enviar();
+  tela = Math.max(0, Math.min(TOTAL-1, tela+dir));
+  pinta();
+}
+function jan(d,h){ return ($(d).value && $(h).value) ? $(d).value+' '+$(h).value : ''; }
+function enviar(){
+  $('btAvancar').disabled = true; $('btAvancar').textContent = 'Enviando…';
+  const payload = {
+    nome:$('f_nome').value, telefone:$('f_telefone').value, email:$('f_email').value,
+    cidade:$('f_cidade').value, origem:R.origem, quem_indicou:$('f_quem_indicou').value,
+    beneficio:R.beneficio, situacao:R.situacao, tem_documentos:R.tem_documentos,
+    urgencia:R.urgencia, relato:$('f_relato').value,
+    janela_1:jan('d1','h1'), janela_2:jan('d2','h2'), janela_3:jan('d3','h3')
+  };
+  google.script.run
+    .withSuccessHandler(r => {
+      if (r && r.ok){ $('form').classList.add('oculto'); $('fim').classList.remove('oculto'); }
+      else { alert('Algo deu errado. Tente de novo em instantes.'); $('btAvancar').disabled=false; pinta(); }
+    })
+    .withFailureHandler(() => { alert('Sem conexão com o servidor. Tente de novo.'); $('btAvancar').disabled=false; pinta(); })
+    .submitLead(payload);
+}
+</script>
+</body></html>

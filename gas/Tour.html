@@ -1,0 +1,96 @@
+<!-- ============================================================
+  Tour.html · Onboarding guiado (D-006)
+  Overlay + spotlight + balões numerados. Vanilla JS, zero deps.
+  Reativável a qualquer momento pelo botão "?" no topo.
+============================================================= -->
+<div id="tourVeu" class="oculto">
+  <div id="tourFundo"></div>
+  <div id="tourFoco"></div>
+  <div id="tourBalao">
+    <span class="util" id="tourPasso"></span>
+    <p id="tourTexto"></p>
+    <div class="nav">
+      <button class="btn-fantasma" id="tourSair">Pular tour</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-fantasma" id="tourAnt">←</button>
+        <button class="btn" id="tourProx">Próximo →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const Tour = (() => {
+  /* Cada passo: aba a ativar, seletor a iluminar, texto.
+     Personagens citados = os do seed (data/README.md). */
+  const PASSOS = [
+    { aba:'hoje', sel:'.topo',
+      t:'Bem-vinda, Dra. Poliana! Este é o seu painel. Vou te mostrar como ele trabalha para você — leva 2 minutos. Tudo o que você vê usa personagens fictícios, para você explorar à vontade.' },
+    { aba:'hoje', sel:'#secAgendaHoje',
+      t:'A tela "Hoje" abre primeiro de propósito: agenda do dia, ações com prazo e leads esperando. É o seu dia em uma tela — sem procurar nada.' },
+    { aba:'hoje', sel:'#secAcoes',
+      t:'Aqui vivem os prazos. Repare no caso do Osvaldo: o INSS abriu exigência com prazo. O sistema não deixa você depender da memória — o que vence aparece em vermelho.' },
+    { aba:'leads', sel:'#filtrosLeads',
+      t:'Na aba Leads, você filtra por faixa e ordena por prioridade, data ou A–Z. Os aquecidos ficam juntos; os frios não se perdem.' },
+    { aba:'leads', sel:'.item[data-lead="L001"]',
+      t:'A Iolanda chegou pela sua página de indicações. O sistema leu as respostas dela e calculou a prioridade: pensão negada + sem renda + indicação nominal. A conta é transparente — e os pesos são SEUS, editáveis na planilha.' },
+    { aba:'leads', sel:'.item[data-lead="L001"] .acoes',
+      t:'Ela sugeriu 3 horários. Você escolhe um com um clique — e o sistema já escreve a mensagem de confirmação para você revisar e enviar pelo SEU WhatsApp. Nada, nunca, sai sem você ler antes.' },
+    { aba:'leads', sel:'.item[data-lead="L003"]',
+      t:'O Wilson já está agendado. Na hora da conversa, o botão "Modo consulta" abre um roteiro com checkboxes; ao final, um clique gera o caso e envia o checklist de documentos do benefício certo.' },
+    { aba:'casos', sel:'.item[data-caso="CS002"]',
+      t:'Clientes & Casos usa as mesmas etiquetas que você já usa no Astrea — "Aguardando perícia", "Exigência". A Adriana tem perícia dia 30/07: há um modelo pronto de preparação para enviar a ela.' },
+    { aba:'casos', sel:'.item[data-caso="CS005"] ',
+      t:'A Cleuza entrou com pontuação baixa — e o caso foi DEFERIDO. Lição importante: a pontuação organiza a sua atenção; quem avalia mérito é você, sempre. O sistema jamais opina sobre direito.' },
+    { aba:'casos', sel:'.item[data-caso="CS002"] .acoes',
+      t:'"Responder status" transforma o "Dra., e o meu processo?" em um clique. "Relatório PDF" gera um documento formal na pasta do cliente. "Exportar p/ Astrea" copia o cadastro completo — você nunca digita duas vezes.' },
+    { aba:'docs', sel:'main',
+      t:'E aqui, tudo o que está faltando de documento, em um só lugar. Pronto! Explore à vontade — e quando quiser rever este tour, toque no botão "?" lá em cima. 💛' }
+  ];
+  let i = 0, ativo = false;
+
+  function el(s){ return document.querySelector(s); }
+  function mostrar(){
+    const p = PASSOS[i];
+    // troca de aba se necessário
+    const btn = document.querySelector(`#abas button[data-aba="${p.aba}"]`);
+    if (btn && !btn.classList.contains('sel')) btn.click();
+    requestAnimationFrame(() => setTimeout(() => {
+      let alvo = el(p.sel) || el('main');
+      alvo.scrollIntoView({block:'center', behavior:'auto'});   // instantâneo: medição estável
+      const r = alvo.getBoundingClientRect();
+      const foco = el('#tourFoco');
+      foco.style.top=(r.top-6)+'px'; foco.style.left=(r.left-6)+'px';
+      foco.style.width=(r.width+12)+'px'; foco.style.height=(r.height+12)+'px';
+      const balao = el('#tourBalao');
+      el('#tourPasso').textContent = 'PASSO '+(i+1)+' DE '+PASSOS.length;
+      el('#tourTexto').textContent = p.t;
+      el('#tourAnt').style.visibility = i===0?'hidden':'visible';
+      el('#tourProx').textContent = i===PASSOS.length-1 ? 'Concluir ✓' : 'Próximo →';
+      balao.style.bottom = '';
+      const hB = balao.offsetHeight || 180;
+      let top = (r.bottom + 190 < window.innerHeight) ? r.bottom + 14 : r.top - hB - 14;
+      top = Math.max(10, Math.min(top, window.innerHeight - hB - 10));   // clamp: nunca fora da tela
+      balao.style.top = top+'px';
+      balao.style.left = Math.max(10, Math.min(r.left, window.innerWidth-340))+'px';
+    }, 120));
+  }
+  function iniciar(manual){
+    i = 0; ativo = true;
+    el('#tourVeu').classList.remove('oculto');
+    mostrar();
+  }
+  function sair(){
+    ativo = false;
+    el('#tourVeu').classList.add('oculto');
+    localStorage.setItem('tourVisto','1');
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    el('#tourProx').onclick = () => { if (i>=PASSOS.length-1) return sair(); i++; mostrar(); };
+    el('#tourAnt').onclick  = () => { if (i>0){ i--; mostrar(); } };
+    el('#tourSair').onclick = sair;
+    window.addEventListener('resize', () => { if (ativo) mostrar(); });
+  });
+  return { iniciar };
+})();
+</script>

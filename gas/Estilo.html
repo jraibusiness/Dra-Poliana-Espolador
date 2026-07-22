@@ -1,0 +1,36 @@
+<!-- ============================================================
+  Estilo.html · ÚNICO lugar onde a identidade visual vive (D-005)
+  Re-skin para a marca da Dra. Poliana = trocar o bloco :root
+============================================================= -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F141E; --noir:#0A0E16; --gold:#C4A264; --gold-suave:rgba(196,162,100,.14);
+  --texto:#F0EDE6; --texto-2:#9AA3B2; --card:#151B27; --borda:#242C3A;
+  --ok:#5FAE7C; --alerta:#D98E5F; --erro:#C86A6A; --info:#6E8BB8;
+  --font-display:'Cinzel',serif; --font-corpo:'EB Garamond',serif; --font-util:'Space Mono',monospace;
+  --raio:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--texto);font-family:var(--font-corpo);font-size:17px;line-height:1.55;min-height:100vh}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:.02em}
+small,.util{font-family:var(--font-util);font-size:12px;letter-spacing:.04em}
+button{font-family:var(--font-corpo);cursor:pointer;border:none;border-radius:var(--raio)}
+input,select,textarea{font-family:var(--font-corpo);font-size:17px;width:100%;padding:13px 14px;background:var(--noir);color:var(--texto);border:1px solid var(--borda);border-radius:var(--raio);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+.btn{display:inline-block;padding:14px 26px;background:var(--gold);color:var(--noir);font-weight:500;font-size:17px;text-align:center;text-decoration:none}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-fantasma{background:transparent;color:var(--texto-2);border:1px solid var(--borda);padding:13px 22px}
+.card{background:var(--card);border:1px solid var(--borda);border-radius:var(--raio);padding:18px}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-family:var(--font-util);font-size:11px;letter-spacing:.05em}
+.b-prior{background:rgba(200,106,106,.16);color:#E29A9A}
+.b-qual{background:var(--gold-suave);color:var(--gold)}
+.b-aval{background:rgba(110,139,184,.16);color:#9FB4D6}
+.b-info{background:rgba(154,163,178,.14);color:var(--texto-2)}
+.lgpd{display:flex;gap:8px;align-items:flex-start;justify-content:center;padding:16px;color:var(--texto-2);font-size:13.5px;text-align:center;border-top:1px solid var(--borda);margin-top:28px}
+.oculto{display:none!important}
+::selection{background:var(--gold);color:var(--noir)}
+@media (min-width:700px){body{font-size:18px}}
+</style>

@@ -1,0 +1,8 @@
+id_agendamento,id_lead,id_cliente,tipo,janela_1,janela_2,janela_3,data_confirmada,modalidade,link_reuniao,status,lembrete_enviado
+A001,L001,,Consulta inicial,2026-07-23 14:00,2026-07-24 09:00,2026-07-25 10:00,,,,Aguardando escolha da advogada,Não
+A002,L002,,Consulta inicial,2026-07-22 18:00,2026-07-23 18:30,2026-07-24 19:00,,,,Aguardando escolha da advogada,Não
+A003,L003,,Consulta inicial,2026-07-22 08:00,2026-07-24 08:00,2026-07-25 08:00,2026-07-22 08:00,Vídeo,https://meet.google.com/exemplo-a003,Confirmado,Sim
+A004,L004,,Consulta inicial,2026-07-28 15:00,2026-07-29 15:00,2026-07-30 15:00,,,,Aguardando escolha da advogada,Não
+A005,,C002,Perícia médica (INSS),,,,2026-07-30 10:20,Presencial,APS Curitiba-Centro,Confirmado,Não
+A006,,C003,Retorno - entrega de documento,,,,2026-07-23 16:00,Telefone,,Confirmado,Sim
+A007,,C005,Retorno - conferência de valores,,,,2026-07-25 09:30,Vídeo,https://meet.google.com/exemplo-a007,Confirmado,Não

@@ -1,0 +1,29 @@
+chave,valor,descricao
+ESCRITORIO_NOME,Poliana Espolador Bilk Sociedade Individual de Advocacia,Razão social
+ESCRITORIO_ADVOGADA,Dra. Poliana Espolador,Nome de exibição
+ESCRITORIO_CIDADE,Curitiba/PR,Praça de atuação
+ESCRITORIO_EMAIL,contato@exemplo.com,⚠ SUBSTITUIR pelo e-mail real
+ESCRITORIO_WHATSAPP,+5541999000000,⚠ SUBSTITUIR pelo número real (formato E.164)
+HORARIO_ATENDIMENTO,"Seg a Sex, 9h-18h",Exibido na LP
+PESO_NEGATIVA,30,Benefício requerido e negado
+PESO_CESSADO,30,Benefício cessado
+PESO_URGENCIA_ALTA,25,Declarou estar sem renda
+PESO_URGENCIA_MEDIA,10,Precisa resolver em breve
+PESO_DOCS_COMPLETOS,20,Tem todos os documentos
+PESO_DOCS_PARCIAIS,10,Tem parte dos documentos
+PESO_BENEFICIO_ALTO,15,Benefício da lista de alto valor
+PESO_INDICACAO_NOMINAL,10,Informou quem indicou
+PESO_RELATO_DETALHADO,5,Relato com mais de 200 caracteres
+PESO_SO_DUVIDAS,-20,Sem pressa + nunca requereu + sem documentos
+PESO_FORA_AREA,-15,Assunto fora da previdenciária
+CORTE_PRIORITARIO,70,Score mínimo da faixa Prioritário
+CORTE_QUALIFICADO,40,Score mínimo da faixa Qualificado
+CORTE_AVALIACAO,20,Score mínimo da faixa Em avaliação
+SLA_PRIORITARIO,24,Horas para responder um lead prioritário
+SLA_QUALIFICADO,72,Horas para responder um lead qualificado
+BENEFICIOS_ALTO_VALOR,Aposentadoria por idade urbana|Aposentadoria por tempo de contribuição (híbrida)|Aposentadoria especial|Auxílio por incapacidade temporária|BPC/LOAS - Pessoa com deficiência|Pensão por morte,Separados por |
+FASES,Consulta agendada|Coleta de documentos|Protocolado - aguardando análise|Aguardando perícia médica|Exigência de documentação|Em análise de cálculo|Deferido - implantação|Indeferido - avaliando recurso|Judicial - ajuizado|Encerrado,Etiquetas espelhando o Astrea
+DRIVE_PASTA_RAIZ,ID_DA_PASTA_RAIZ,⚠ Preencher com o ID da pasta raiz no Drive
+RODAPE_LGPD,"Seus dados permanecem na infraestrutura do escritório, protegidos nos termos da LGPD, e não são enviados a sistemas de inteligência artificial.","Texto fixo em LP, painel e e-mails"
+PAINEL_TOKEN,TROCAR-POR-TOKEN-LONGO-E-ALEATORIO,⚠ Token do painel (?page=painel&k=...). Gerar um valor aleatório longo antes do go-live
+MODO_DEMO,SIM,SIM = dados fictícios e tour guiado ativo. Mudar para NAO na homologação.

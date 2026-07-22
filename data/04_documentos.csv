@@ -1,0 +1,23 @@
+id_doc,id_caso,nome_documento,obrigatorio,status,data_solicitacao,data_recebimento,link_arquivo,observacao
+D001,CS001,Documento de identidade (RG/CNH),Sim,Validado,2026-03-06,2026-03-08,https://drive.google.com/EXEMPLO/d001,
+D002,CS001,CPF,Sim,Validado,2026-03-06,2026-03-08,https://drive.google.com/EXEMPLO/d002,
+D003,CS001,Comprovante de residência,Sim,Validado,2026-03-06,2026-03-08,https://drive.google.com/EXEMPLO/d003,
+D004,CS001,CTPS (todas as páginas),Sim,Validado,2026-03-06,2026-03-11,https://drive.google.com/EXEMPLO/d004,3 carteiras
+D005,CS001,Extrato CNIS,Sim,Validado,2026-03-06,2026-03-11,https://drive.google.com/EXEMPLO/d005,
+D006,CS001,Declaração do sindicato rural,Sim,Validado,2026-03-06,2026-03-18,https://drive.google.com/EXEMPLO/d006,Sindicato de Nova Cantu
+D007,CS001,Notas de produtor rural / documentos do sítio,Não,Recebido,2026-03-06,2026-03-18,https://drive.google.com/EXEMPLO/d007,Do pai; parcial
+D008,CS002,Documento de identidade (RG/CNH),Sim,Validado,2026-04-15,2026-04-16,https://drive.google.com/EXEMPLO/d008,
+D009,CS002,Laudos e relatórios médicos,Sim,Validado,2026-04-15,2026-04-16,https://drive.google.com/EXEMPLO/d009,Otorrino + psiquiatra
+D010,CS002,Exames complementares,Sim,Validado,2026-04-15,2026-04-18,https://drive.google.com/EXEMPLO/d010,Videolaringoscopia
+D011,CS002,Comunicação de decisão de cessação,Sim,Validado,2026-04-15,2026-04-16,https://drive.google.com/EXEMPLO/d011,
+D012,CS002,Declaração do empregador sobre readaptação,Não,Solicitado,2026-06-30,,,Secretaria de Educação não respondeu
+D013,CS003,CTPS - Posto Bandeirante (1989-1993),Sim,Pendente,2026-07-10,,,EXIGÊNCIA INSS - prazo 08/08
+D014,CS003,Extrato CNIS,Sim,Validado,2026-02-11,2026-02-13,https://drive.google.com/EXEMPLO/d014,
+D015,CS003,Comunicação de decisão (indeferimento),Sim,Validado,2026-02-11,2026-02-13,https://drive.google.com/EXEMPLO/d015,
+D016,CS004,Laudo médico circunstanciado (CID),Sim,Validado,2026-01-21,2026-01-24,https://drive.google.com/EXEMPLO/d016,CAPSi - TEA nível 2
+D017,CS004,Relatório escolar / APAE,Sim,Validado,2026-01-21,2026-01-29,https://drive.google.com/EXEMPLO/d017,
+D018,CS004,CadÚnico atualizado,Sim,Validado,2026-01-21,2026-01-27,https://drive.google.com/EXEMPLO/d018,
+D019,CS004,Comprovantes de renda do grupo familiar,Sim,Validado,2026-01-21,2026-02-02,https://drive.google.com/EXEMPLO/d019,Ponto controvertido
+D020,CS005,Carnês de contribuição recuperados,Sim,Validado,2025-12-01,2026-03-25,https://drive.google.com/EXEMPLO/d020,Recuperados via extrato bancário
+D021,CS005,Extrato CNIS,Sim,Validado,2025-12-01,2025-12-05,https://drive.google.com/EXEMPLO/d021,
+D022,CS005,Carta de concessão,Sim,Recebido,2026-06-27,2026-06-29,https://drive.google.com/EXEMPLO/d022,

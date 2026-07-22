@@ -1,0 +1,85 @@
+beneficio,documento,obrigatorio,ordem,orientacao_ao_cliente
+Aposentadoria por idade urbana,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Aposentadoria por idade urbana,CPF,Sim,2,Pode ser o número no RG/CNH
+Aposentadoria por idade urbana,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Aposentadoria por idade urbana,Certidão de nascimento ou casamento,Sim,4,Atualizada
+Aposentadoria por idade urbana,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Aposentadoria por idade urbana,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Aposentadoria por idade urbana,CTPS - todas as páginas com anotação,Sim,7,Inclusive carteiras antigas
+Aposentadoria por idade urbana,Carnês de contribuição (GPS),Não,8,Se contribuiu como autônomo
+Aposentadoria por idade urbana,Comprovantes de pagamento em atraso,Não,9,Se houver
+Aposentadoria por tempo de contribuição (híbrida),Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Aposentadoria por tempo de contribuição (híbrida),CPF,Sim,2,Pode ser o número no RG/CNH
+Aposentadoria por tempo de contribuição (híbrida),Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Aposentadoria por tempo de contribuição (híbrida),Certidão de nascimento ou casamento,Sim,4,Atualizada
+Aposentadoria por tempo de contribuição (híbrida),Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Aposentadoria por tempo de contribuição (híbrida),Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Aposentadoria por tempo de contribuição (híbrida),CTPS - todas as páginas com anotação,Sim,7,Todas as carteiras
+Aposentadoria por tempo de contribuição (híbrida),Declaração de sindicato rural,Sim,8,Do município onde trabalhou na roça
+Aposentadoria por tempo de contribuição (híbrida),Notas fiscais de produtor rural,Não,9,Podem estar no nome dos pais
+Aposentadoria por tempo de contribuição (híbrida),Certidão de casamento com profissão 'lavrador',Não,10,Prova material valiosa
+Aposentadoria por tempo de contribuição (híbrida),Histórico escolar rural,Não,11,Se estudou em escola rural
+Aposentadoria por tempo de contribuição (híbrida),Contato de 2 testemunhas,Sim,12,Que trabalharam com você na época
+Aposentadoria especial,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Aposentadoria especial,CPF,Sim,2,Pode ser o número no RG/CNH
+Aposentadoria especial,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Aposentadoria especial,Certidão de nascimento ou casamento,Sim,4,Atualizada
+Aposentadoria especial,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Aposentadoria especial,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Aposentadoria especial,PPP - Perfil Profissiográfico Previdenciário,Sim,7,Solicite ao RH de cada empresa
+Aposentadoria especial,LTCAT,Não,8,Se a empresa fornecer
+Aposentadoria especial,CTPS - todas as páginas,Sim,9,
+Aposentadoria especial,Contato das empresas onde trabalhou,Sim,10,Inclusive as que fecharam
+Auxílio por incapacidade temporária,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Auxílio por incapacidade temporária,CPF,Sim,2,Pode ser o número no RG/CNH
+Auxílio por incapacidade temporária,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Auxílio por incapacidade temporária,Certidão de nascimento ou casamento,Sim,4,Atualizada
+Auxílio por incapacidade temporária,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Auxílio por incapacidade temporária,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Auxílio por incapacidade temporária,Laudos e relatórios médicos,Sim,7,Com CID e assinatura do médico
+Auxílio por incapacidade temporária,Exames complementares,Sim,8,Os mais recentes
+Auxílio por incapacidade temporária,Receituários e prescrições,Não,9,Comprovam tratamento continuado
+Auxílio por incapacidade temporária,Atestados de afastamento,Não,10,
+Auxílio por incapacidade temporária,Comunicação de decisão do INSS,Não,11,Se já houve pedido anterior
+BPC/LOAS - Pessoa com deficiência,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+BPC/LOAS - Pessoa com deficiência,CPF,Sim,2,Pode ser o número no RG/CNH
+BPC/LOAS - Pessoa com deficiência,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+BPC/LOAS - Pessoa com deficiência,Certidão de nascimento ou casamento,Sim,4,Atualizada
+BPC/LOAS - Pessoa com deficiência,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+BPC/LOAS - Pessoa com deficiência,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+BPC/LOAS - Pessoa com deficiência,Laudo médico circunstanciado,Sim,7,Com CID e descrição das limitações
+BPC/LOAS - Pessoa com deficiência,CadÚnico atualizado,Sim,8,Atualize no CRAS do seu bairro
+BPC/LOAS - Pessoa com deficiência,Comprovantes de renda de todos que moram na casa,Sim,9,"De todos, sem exceção"
+BPC/LOAS - Pessoa com deficiência,Relatório escolar ou de terapias,Não,10,Muito útil em casos de criança
+BPC/LOAS - Pessoa com deficiência,Comprovantes de gastos com saúde,Não,11,Podem ser deduzidos da renda
+Pensão por morte,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Pensão por morte,CPF,Sim,2,Pode ser o número no RG/CNH
+Pensão por morte,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Pensão por morte,Certidão de nascimento ou casamento,Sim,4,Atualizada
+Pensão por morte,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Pensão por morte,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Pensão por morte,Certidão de óbito,Sim,7,
+Pensão por morte,Certidão de casamento ou prova de união estável,Sim,8,Veja a lista de provas abaixo
+Pensão por morte,"Documentos do falecido (RG, CPF, CNIS)",Sim,9,
+Pensão por morte,Comprovantes de residência em comum,Não,10,Contas no endereço do casal
+Pensão por morte,"Fotos, conversas, declarações de terceiros",Não,11,Provas de convivência
+Pensão por morte,Contato de 2 testemunhas,Não,12,Para casos de união estável sem registro
+Revisão de benefício,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Revisão de benefício,CPF,Sim,2,Pode ser o número no RG/CNH
+Revisão de benefício,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Revisão de benefício,Certidão de nascimento ou casamento,Sim,4,Atualizada
+Revisão de benefício,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Revisão de benefício,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Revisão de benefício,Carta de concessão do benefício,Sim,7,
+Revisão de benefício,Memória de cálculo da RMI,Sim,8,Solicite no Meu INSS
+Revisão de benefício,Extrato CNIS completo,Sim,9,
+Revisão de benefício,Comprovantes de contribuições anteriores a 1994,Não,10,Essenciais para a revisão da vida toda
+Auxílio-acidente,Documento de identidade (RG ou CNH),Sim,1,"Frente e verso, legível"
+Auxílio-acidente,CPF,Sim,2,Pode ser o número no RG/CNH
+Auxílio-acidente,Comprovante de residência atualizado,Sim,3,Últimos 3 meses
+Auxílio-acidente,Certidão de nascimento ou casamento,Sim,4,Atualizada
+Auxílio-acidente,Extrato CNIS,Sim,5,Baixe no Meu INSS ou eu obtenho para você
+Auxílio-acidente,Senha do Meu INSS,Não,6,Só se você quiser que eu acompanhe junto com você
+Auxílio-acidente,Laudos médicos com descrição da sequela,Sim,7,
+Auxílio-acidente,CAT - Comunicação de Acidente de Trabalho,Não,8,Se houver
+Auxílio-acidente,Boletim de ocorrência,Não,9,Se acidente de trânsito

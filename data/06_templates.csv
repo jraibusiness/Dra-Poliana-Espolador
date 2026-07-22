@@ -1,0 +1,75 @@
+id_template,gatilho,canal,assunto,corpo,ativo
+T001,Lead recebido pela LP,E-mail,Recebi seu contato - Dra. Poliana Espolador,"Olá, {{primeiro_nome}}!
+
+Recebi as informações que você enviou sobre {{beneficio}} e já estão comigo.
+
+Vou analisar o seu caso com atenção e retorno para confirmarmos o melhor horário entre os que você indicou.
+
+Qualquer documento que você já tenha em mãos, pode ir separando — vamos conversar sobre isso.
+
+Um abraço,
+Poliana Espolador
+OAB/PR — Advocacia Previdenciária",Sim
+T002,Consulta confirmada,WhatsApp,,"{{primeiro_nome}}, tudo bem? Aqui é a Dra. Poliana.
+
+Confirmando nossa conversa para {{data}} às {{hora}}. Vou te ligar neste mesmo número.
+
+Se puder, deixe por perto seus documentos pessoais e qualquer papel do INSS que você tenha. Não precisa organizar nada — é só ter à mão.
+
+Até lá!",Sim
+T003,Envio do checklist de documentos,E-mail,Documentos para o seu pedido de {{beneficio}},"{{primeiro_nome}}, foi muito bom conversar com você.
+
+Como combinamos, segue a lista dos documentos que preciso para dar entrada no seu pedido:
+
+{{docs_pendentes}}
+
+Você pode me enviar por foto mesmo, desde que dê para ler. Se algum documento você não tiver, me avise — na maioria das vezes existe outro caminho.
+
+Qualquer dúvida, é só chamar.
+
+Poliana Espolador",Sim
+T004,Lembrete de documento pendente,WhatsApp,,"Oi, {{primeiro_nome}}! Passando para lembrar dos documentos que ainda faltam para o seu caso:
+
+{{docs_pendentes}}
+
+Assim que chegarem, já dou entrada. Se estiver difícil conseguir algum, me fala que a gente pensa junto numa alternativa.",Sim
+T005,Resposta a pedido de status,WhatsApp,,"{{primeiro_nome}}, tudo bem?
+
+Seu processo de {{beneficio}} está em: {{fase}}.
+Protocolo: {{protocolo}}
+
+Assim que houver qualquer movimentação, eu te aviso — você não precisa ficar acompanhando.",Sim
+T006,Preparação para perícia médica,WhatsApp,,"{{primeiro_nome}}, sua perícia está marcada para {{data}} às {{hora}}.
+
+Algumas orientações importantes:
+• Chegue com 30 minutos de antecedência
+• Leve documento com foto
+• Leve TODOS os laudos e exames, de preferência os originais
+• Responda ao perito com clareza sobre suas limitações no dia a dia
+
+Qualquer dúvida antes do dia, me chame.",Sim
+T007,Exigência do INSS,WhatsApp,,"{{primeiro_nome}}, o INSS pediu um documento a mais para analisar o seu pedido. Isso é comum e não significa negativa.
+
+Preciso de: {{docs_pendentes}}
+
+Temos prazo até {{data}}. Assim que você conseguir, me envie que eu protocolo a resposta.",Sim
+T008,Benefício deferido,WhatsApp,,"{{primeiro_nome}}, tenho uma ótima notícia! 🎉
+
+Seu pedido de {{beneficio}} foi DEFERIDO.
+
+Vou conferir os valores e o cálculo para garantir que está tudo correto, e te explico os próximos passos.
+
+Parabéns — foi um caminho longo e deu certo.",Sim
+T009,Agradecimento a quem indicou,WhatsApp,,"Oi! Aqui é a Dra. Poliana.
+
+Só passei para agradecer por ter indicado meu trabalho. Confiança que vem de indicação é a que mais me honra.
+
+Muito obrigada mesmo!",Sim
+T010,Lead informativo (sem urgência),E-mail,Sobre a sua dúvida - Dra. Poliana Espolador,"Olá, {{primeiro_nome}}!
+
+Recebi sua mensagem. Sua dúvida é pertinente e merece uma resposta cuidadosa, que depende de alguns detalhes da sua situação específica.
+
+Quando quiser conversar com calma, é só me chamar — deixo o canal aberto, sem compromisso.
+
+Até breve,
+Poliana Espolador",Sim

@@ -40,7 +40,7 @@ const Tour = (() => {
       t:'O Wilson já está agendado. Na hora da conversa, o botão "Modo consulta" abre um roteiro com checkboxes; ao final, um clique gera o caso e envia o checklist de documentos do benefício certo.' },
     { aba:'casos', sel:'.item[data-caso="CS002"]',
       t:'Clientes & Casos usa as mesmas etiquetas que você já usa no Astrea — "Aguardando perícia", "Exigência". A Adriana tem perícia dia 30/07: há um modelo pronto de preparação para enviar a ela.' },
-    { aba:'casos', sel:'.item[data-caso="CS005"] ',
+    { aba:'casos', sel:'.item[data-caso="CS005"]',
       t:'A Cleuza entrou com pontuação baixa — e o caso foi DEFERIDO. Lição importante: a pontuação organiza a sua atenção; quem avalia mérito é você, sempre. O sistema jamais opina sobre direito.' },
     { aba:'casos', sel:'.item[data-caso="CS002"] .acoes',
       t:'"Responder status" transforma o "Dra., e o meu processo?" em um clique. "Relatório PDF" gera um documento formal na pasta do cliente. "Exportar p/ Astrea" copia o cadastro completo — você nunca digita duas vezes.' },
@@ -83,14 +83,19 @@ const Tour = (() => {
   function sair(){
     ativo = false;
     el('#tourVeu').classList.add('oculto');
-    localStorage.setItem('tourVisto','1');
+    try { localStorage.setItem('tourVisto','1'); } catch(e) {}
   }
-  document.addEventListener('DOMContentLoaded', () => {
+  function ligarBotoes(){
     el('#tourProx').onclick = () => { if (i>=PASSOS.length-1) return sair(); i++; mostrar(); };
     el('#tourAnt').onclick  = () => { if (i>0){ i--; mostrar(); } };
     el('#tourSair').onclick = sair;
     window.addEventListener('resize', () => { if (ativo) mostrar(); });
-  });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ligarBotoes);
+  } else {
+    ligarBotoes();
+  }
   return { iniciar };
 })();
 </script>

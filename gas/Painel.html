@@ -14,8 +14,11 @@ nav.abas button{white-space:nowrap;padding:9px 16px;background:transparent;color
   border:1px solid var(--borda);border-radius:99px;font-size:15px}
 nav.abas button.sel{background:var(--gold);color:var(--noir);border-color:var(--gold)}
 main{max-width:900px;margin:0 auto;padding:16px 14px 60px}
-.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.filtros select{width:auto;flex:1;min-width:130px;font-size:15px;padding:9px 10px}
+.filtros{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:transparent;color:var(--texto-2);border:1px solid var(--borda);
+  border-radius:99px;padding:8px 14px;font-size:14px;white-space:nowrap;min-height:38px}
+.chip.sel{background:var(--gold);color:var(--noir);border-color:var(--gold)}
 .item{margin-bottom:12px}
 .item .linha1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .item .nome{font-size:18px;font-weight:500;flex:1}
@@ -39,7 +42,7 @@ main{max-width:900px;margin:0 auto;padding:16px 14px 60px}
 .chk .dica{color:var(--texto-2);font-size:13.5px}
 /* tour */
 #tourVeu{position:fixed;inset:0;z-index:200;pointer-events:none}
-#tourFundo{position:absolute;inset:0;background:rgba(5,8,14,.78);pointer-events:auto}
+#tourFundo{position:absolute;inset:0;background:transparent;pointer-events:auto}
 #tourFoco{position:absolute;border:2px solid var(--gold);border-radius:12px;
   box-shadow:0 0 0 9999px rgba(5,8,14,.78);transition:all .35s ease;pointer-events:none}
 #tourBalao{position:absolute;background:var(--card);border:1px solid var(--gold);border-radius:12px;
@@ -86,7 +89,9 @@ function boot(){
     b.classList.add('sel'); abaAtiva=b.dataset.aba; pinta();
   });
   pinta();
-  if (DB.config.modoDemo && !localStorage.getItem('tourVisto')) Tour.iniciar(false);
+  let jaViuTour = false;
+  try { jaViuTour = !!localStorage.getItem('tourVisto'); } catch(e) { jaViuTour = false; }
+  if (DB.config.modoDemo && !jaViuTour) Tour.iniciar(false);
 }
 function recarregar(){ google.script.run.withSuccessHandler(d=>{DB=d;pinta();}).getPainelData(); }
 
@@ -136,16 +141,13 @@ function vLeads(){
     alfa:(a,b)=>String(a.nome).localeCompare(b.nome,'pt-BR')
   }[F.ordem];
   lista.sort(ord);
+  const chipsFaixa = [['','Todas'],['Prioritário','Prioritário'],['Qualificado','Qualificado'],['Em avaliação','Em avaliação'],['Informativo','Informativo']]
+    .map(([v,r])=>`<button class="chip ${F.faixa===v?'sel':''}" onclick="F.faixa='${v}';pinta()">${r}</button>`).join('');
+  const chipsOrdem = [['score','Prioridade'],['data','Recentes'],['alfa','A–Z']]
+    .map(([v,r])=>`<button class="chip ${F.ordem===v?'sel':''}" onclick="F.ordem='${v}';pinta()">${r}</button>`).join('');
   return `<div class="filtros" id="filtrosLeads">
-    <select onchange="F.faixa=this.value;pinta()">
-      <option value="">Todas as faixas</option>
-      ${['Prioritário','Qualificado','Em avaliação','Informativo'].map(f=>`<option ${F.faixa===f?'selected':''}>${f}</option>`).join('')}
-    </select>
-    <select onchange="F.ordem=this.value;pinta()">
-      <option value="score" ${F.ordem==='score'?'selected':''}>Por prioridade</option>
-      <option value="data" ${F.ordem==='data'?'selected':''}>Mais recentes</option>
-      <option value="alfa" ${F.ordem==='alfa'?'selected':''}>A–Z</option>
-    </select></div>` +
+    <div class="chips" role="group" aria-label="Filtrar por faixa">${chipsFaixa}</div>
+    <div class="chips" role="group" aria-label="Ordenar">${chipsOrdem}</div></div>` +
     (lista.length ? lista.map(cardLead).join('') : '<p class="vazio">Nenhum lead nessa combinação de filtros.</p>');
 }
 

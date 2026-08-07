@@ -135,7 +135,43 @@ function escolherJanela(idLead, janela){
   atualizarCampo(ABAS.LEADS,'id_lead', idLead, 'status_lead', 'Agendado');
   atualizarCampo(ABAS.AGENDA,'id_lead', idLead, 'data_confirmada', janela);
   atualizarCampo(ABAS.AGENDA,'id_lead', idLead, 'status', 'Confirmado');
+  criarEventoCalendar_(idLead, janela);
   return { ok:true };
+}
+
+/** Cria o evento no Google Calendar. Nunca lança erro para fora:
+ *  se o Calendar falhar por qualquer motivo, a consulta já está
+ *  gravada na planilha e o fluxo da advogada não pode travar. */
+function criarEventoCalendar_(idLead, janela){
+  try{
+    const partes = String(janela).split(' ');
+    if (partes.length < 2) return;
+    const inicio = new Date(partes[0] + 'T' + partes[1] + ':00');
+    if (isNaN(inicio.getTime())) return;
+
+    const duracaoMin = cfgNum('CONSULTA_DURACAO_MIN') || 30;
+    const fim = new Date(inicio.getTime() + duracaoMin * 60000);
+
+    const lead = lerAba(ABAS.LEADS).find(l => l.id_lead === idLead) || {};
+    const calId = cfg('CALENDAR_ID') || 'primary';
+    const cal = (calId === 'primary')
+      ? CalendarApp.getDefaultCalendar()
+      : CalendarApp.getCalendarById(calId);
+    if (!cal) return;
+
+    cal.createEvent(
+      'Consulta · ' + (lead.nome || 'Lead'),
+      inicio, fim,
+      {
+        description: 'Benefício: ' + (lead.beneficio_pretendido || '') +
+          '\nTelefone: ' + (lead.telefone || '') +
+          '\nOrigem: painel Opus AI · id_lead ' + idLead,
+        location: cfg('ESCRITORIO_CIDADE') || ''
+      }
+    );
+  }catch(e){
+    console.error('Falha ao criar evento no Calendar (idLead=' + idLead + '): ' + e);
+  }
 }
 
 function mudarFase(idCaso, fase){

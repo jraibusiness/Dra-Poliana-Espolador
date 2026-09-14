@@ -1,89 +1,194 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head><?!= include('Estilo'); ?>
+
 <style>
-.topo{position:sticky;top:0;z-index:50;background:var(--noir);border-bottom:1px solid var(--borda);
-  display:flex;align-items:center;gap:10px;padding:12px 16px}
-.topo h1{font-size:17px;color:var(--gold);flex:1}
-.topo .util{color:var(--texto-2)}
-#btnTour{background:var(--gold-suave);color:var(--gold);border:1px solid var(--gold);
-  border-radius:50%;width:34px;height:34px;font-family:var(--font-util);font-size:15px}
-nav.abas{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;background:var(--noir);
-  border-bottom:1px solid var(--borda);position:sticky;top:57px;z-index:49}
-nav.abas button{white-space:nowrap;padding:9px 16px;background:transparent;color:var(--texto-2);
-  border:1px solid var(--borda);border-radius:99px;font-size:15px}
-nav.abas button.sel{background:var(--gold);color:var(--noir);border-color:var(--gold)}
-main{max-width:900px;margin:0 auto;padding:16px 14px 60px}
-.filtros{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+
+/* ---------- Cabecalho fixo ---------- */
+
+.topo{position:sticky;top:0;z-index:50;background:var(--bg-header);
+  border-bottom:1px solid var(--borda);box-shadow:var(--sombra);
+  display:flex;align-items:center;gap:10px;padding:13px 16px}
+
+.topo h1{font-size:17px;color:var(--primary);flex:1;letter-spacing:-.01em}
+
+.topo .util{color:var(--text-muted);font-size:11px;letter-spacing:.08em;
+  background:var(--p2-bg);color:var(--p2);padding:4px 9px;border-radius:99px;font-weight:700}
+
+#btnTour{background:var(--primary-08);color:var(--primary);border:1.5px solid var(--primary-16);
+  border-radius:50%;width:36px;height:36px;font-size:16px;font-weight:700;flex:none;
+  display:grid;place-items:center;cursor:pointer}
+
+#btnTour:hover{background:var(--primary-16)}
+nav.abas{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;background:var(--bg-header);
+  border-bottom:1px solid var(--borda);position:sticky;top:60px;z-index:49;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav.abas::-webkit-scrollbar{display:none}
+nav.abas button{white-space:nowrap;padding:9px 16px;background:#fff;color:var(--text-muted);
+  border:1.5px solid var(--borda);border-radius:99px;font-size:14.5px;font-weight:500;min-height:40px}
+nav.abas button.sel{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+main{max-width:900px;margin:0 auto;padding:18px 14px 70px}
+h2.sec{font-size:17px;margin-bottom:12px;color:var(--text-main)}
+
+/* ---------- Filtros em chips (nunca <select>: some em compartilhamento de tela) ---------- */
+
+.filtros{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{background:transparent;color:var(--texto-2);border:1px solid var(--borda);
-  border-radius:99px;padding:8px 14px;font-size:14px;white-space:nowrap;min-height:38px}
-.chip.sel{background:var(--gold);color:var(--noir);border-color:var(--gold)}
+
+.chip{background:#fff;color:var(--text-muted);border:1.5px solid var(--borda);
+  border-radius:99px;padding:8px 14px;font-size:14px;white-space:nowrap;min-height:40px;
+  font-weight:500;cursor:pointer;transition:all .15s}
+
+.chip:hover{border-color:var(--borda-forte)}
+
+.chip.sel{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600}
+
+/* ---------- Itens ---------- */
+
 .item{margin-bottom:12px}
+
 .item .linha1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.item .nome{font-size:18px;font-weight:500;flex:1}
-.item .meta{color:var(--texto-2);font-size:14.5px;margin-top:4px}
-.item .acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.item .acoes button,.item .acoes a{font-size:14px;padding:9px 13px}
-.score{font-family:var(--font-util);font-size:13px;color:var(--gold)}
-.vazio{color:var(--texto-2);text-align:center;padding:30px 0}
-.alertaHoje{border-left:3px solid var(--erro);padding-left:14px}
-.relato{background:var(--noir);border-radius:var(--raio);padding:12px;margin-top:10px;
-  font-style:italic;color:var(--texto-2);font-size:15.5px}
-/* modal genérico */
-.veu{position:fixed;inset:0;background:rgba(5,8,14,.82);z-index:90;display:grid;place-items:center;padding:16px}
-.modal{background:var(--card);border:1px solid var(--borda);border-radius:14px;max-width:560px;width:100%;
-  max-height:86vh;overflow-y:auto;padding:22px}
-.modal h3{color:var(--gold);margin-bottom:14px}
-.modal textarea{min-height:150px}
-.chk{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--borda)}
-.chk input{width:20px;height:20px;margin-top:3px;accent-color:var(--gold)}
-.chk label{flex:1;font-size:16px}
-.chk .dica{color:var(--texto-2);font-size:13.5px}
-/* tour */
+
+.item .nome{font-size:17px;font-weight:600;flex:1;color:var(--text-main);letter-spacing:-.01em}
+
+.item .meta{color:var(--text-muted);font-size:14px;margin-top:5px;line-height:1.55}
+
+.item .acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+.item .acoes button,.item .acoes a{font-size:14px;padding:10px 14px;min-height:42px}
+
+.score{font-family:var(--font-util);font-size:12.5px;color:var(--text-muted)}
+
+.vazio{color:var(--text-muted);text-align:center;padding:34px 16px;font-size:15px}
+
+.alertaHoje{border-left:4px solid var(--erro)}
+
+.relato{background:var(--bg-app);border-radius:var(--raio);padding:13px 14px;margin-top:11px;
+  color:var(--text-muted);font-size:14.5px;line-height:1.6;border:1px solid var(--borda)}
+
+/* ---------- Modal ---------- */
+
+.veu{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:90;
+  display:grid;place-items:center;padding:16px}
+
+.modal{background:#fff;border-radius:var(--raio-lg);box-shadow:var(--sombra-lg);
+  max-width:560px;width:100%;max-height:88vh;overflow-y:auto;padding:24px 22px}
+
+.modal h3{color:var(--primary);margin-bottom:6px;font-size:20px;letter-spacing:-.01em}
+
+.modal .sub{color:var(--text-muted);font-size:14px;margin-bottom:16px}
+
+.modal textarea{min-height:150px;line-height:1.6}
+
+.rotulo{font-family:var(--font-util);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-muted);display:block;margin-bottom:9px}
+
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--borda)}
+
+.chk:last-child{border-bottom:none}
+
+.chk input[type=checkbox]{width:22px;height:22px;margin-top:2px;accent-color:var(--primary);flex:none;
+  -webkit-appearance:auto;appearance:auto;padding:0}
+
+.chk label{flex:1;font-size:15.5px;line-height:1.5;cursor:pointer}
+
+.chk .dica{color:var(--text-muted);font-size:13px;display:block;margin-top:2px}
+
+.linkDrive{display:inline-flex;align-items:center;gap:8px;padding:12px 14px;margin-top:6px;
+  background:var(--primary-08);border:1.5px solid var(--primary-16);border-radius:var(--raio);
+  color:var(--primary);text-decoration:none;font-weight:600;font-size:14.5px}
+
+/* ---------- Tour ---------- */
+
 #tourVeu{position:fixed;inset:0;z-index:200;pointer-events:none}
+
 #tourFundo{position:absolute;inset:0;background:transparent;pointer-events:auto}
-#tourFoco{position:absolute;border:2px solid var(--gold);border-radius:12px;
-  box-shadow:0 0 0 9999px rgba(5,8,14,.78);transition:all .35s ease;pointer-events:none}
-#tourBalao{position:absolute;background:var(--card);border:1px solid var(--gold);border-radius:12px;
-  padding:16px;max-width:320px;pointer-events:auto;transition:all .35s ease}
-#tourBalao .util{color:var(--gold)}
-#tourBalao p{margin:8px 0 14px;font-size:15.5px}
-#tourBalao .nav{display:flex;gap:8px;justify-content:space-between}
-#tourBalao button{font-size:14px;padding:8px 14px}
+
+#tourFoco{position:absolute;border:2.5px solid var(--primary);border-radius:12px;
+  box-shadow:0 0 0 9999px rgba(15,23,42,.62);transition:all .35s ease;pointer-events:none}
+
+#tourBalao{position:absolute;background:#fff;border:1px solid var(--borda);border-radius:var(--raio-lg);
+  box-shadow:var(--sombra-lg);padding:18px;max-width:320px;pointer-events:auto;transition:all .35s ease}
+
+#tourBalao .util{color:var(--primary);font-weight:700;letter-spacing:.08em}
+
+#tourBalao p{margin:9px 0 15px;font-size:15px;line-height:1.6;color:var(--text-main)}
+
+#tourBalao .nav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+
+#tourBalao button{font-size:14px;padding:9px 14px;min-height:40px}
+
+@media (max-width:400px){
+  main{padding:16px 12px 70px}
+  .item .acoes button,.item .acoes a{font-size:13.5px;padding:10px 12px}
+  .modal{padding:20px 16px}
+}
 </style></head>
 <body>
 <div class="topo">
   <h1 id="tituloPainel">Painel</h1>
-  <span class="util" id="modoDemoTag"></span>
+  <span class="util oculto" id="modoDemoTag"></span>
   <button id="btnTour" title="Rever o tour" onclick="Tour.iniciar(true)">?</button>
 </div>
 <nav class="abas" id="abas">
   <button data-aba="hoje" class="sel">Hoje</button>
   <button data-aba="leads">Leads</button>
-  <button data-aba="casos">Clientes & Casos</button>
+  <button data-aba="casos">Clientes &amp; Casos</button>
   <button data-aba="docs">Documentos</button>
 </nav>
-<main id="conteudo"><p class="vazio">Carregando…</p></main>
-<div class="lgpd">🔒 <span id="lgpdTxt"></span></div>
+<main id="conteudo">
+  <div class="carregando-bloco"><div class="spinner"></div><p>Carregando o seu painel…</p></div>
+</main>
+<div class="lgpd" style="max-width:900px;margin:0 auto 30px;padding:20px 16px 0">
+  &#128274; <span id="lgpdTxt"></span>
+</div>
 <div id="zonaModal"></div>
 <?!= include('Tour'); ?>
 
 <script>
-let DB = null, abaAtiva = 'hoje';
-const F = { faixa:'', fase:'', beneficio:'', ordem:'score' };
-const $ = id => document.getElementById(id);
-const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const cls = f => ({'Prioritário':'b-prior','Qualificado':'b-qual','Em avaliação':'b-aval'}[f]||'b-info');
-const fmtD = v => { if(!v) return ''; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleDateString('pt-BR'); };
-const fmtDH = v => { if(!v) return ''; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); };
 
-google.script.run.withSuccessHandler(d => { DB=d; boot(); }).getPainelData();
+let DB = null, abaAtiva = 'hoje';
+
+const F = { faixa:'', fase:'', ordem:'score' };
+
+const $ = id => document.getElementById(id);
+
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const cls = f => ({'Prioritário':'b-prior','Qualificado':'b-qual','Em avaliação':'b-aval'}[f]||'b-info');
+
+const fmtD = v => { if(!v) return ''; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleDateString('pt-BR'); };
+
+const fmtDH = v => { if(!v) return ''; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); };
+
+/* "2026-08-18 09:00" -> "seg, 18 ago · 09:00" */
+
+const DIAS_SEM = ['dom','seg','ter','qua','qui','sex','sáb'];
+
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+function fmtJanela(j){
+  const m = String(j||'').match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+  if (!m) return esc(j);
+  const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+  return DIAS_SEM[d.getDay()] + ', ' + Number(m[3]) + ' ' + MESES[Number(m[2])-1] + ' · ' + m[4] + ':' + m[5];
+}
+google.script.run
+  .withSuccessHandler(d => { DB=d; boot(); })
+  .withFailureHandler(e => {
+    $('conteudo').innerHTML = '<p class="vazio">Não consegui carregar os dados.<br>' +
+      '<button class="btn" style="margin-top:16px" onclick="location.reload()">Tentar de novo</button></p>';
+  })
+  .getPainelData();
 
 function boot(){
-  $('tituloPainel').textContent = 'Painel · '+DB.config.advogada;
+  $('tituloPainel').textContent = 'Painel · ' + DB.config.advogada;
   $('lgpdTxt').textContent = DB.config.rodapeLgpd;
-  if (DB.config.modoDemo) $('modoDemoTag').textContent = 'DEMO';
+  if (DB.config.modoDemo){
+    $('modoDemoTag').textContent = 'DEMONSTRAÇÃO';
+    $('modoDemoTag').classList.remove('oculto');
+  }
   document.querySelectorAll('#abas button').forEach(b => b.onclick = () => {
     document.querySelectorAll('#abas button').forEach(x=>x.classList.remove('sel'));
     b.classList.add('sel'); abaAtiva=b.dataset.aba; pinta();
@@ -93,9 +198,13 @@ function boot(){
   try { jaViuTour = !!localStorage.getItem('tourVisto'); } catch(e) { jaViuTour = false; }
   if (DB.config.modoDemo && !jaViuTour) Tour.iniciar(false);
 }
-function recarregar(){ google.script.run.withSuccessHandler(d=>{DB=d;pinta();}).getPainelData(); }
+
+function recarregar(cb){
+  google.script.run.withSuccessHandler(d=>{ DB=d; pinta(); if(cb) cb(); }).getPainelData();
+}
 
 /* ---------------- render ---------------- */
+
 function pinta(){
   const c = $('conteudo');
   if (abaAtiva==='hoje')  c.innerHTML = vHoje();
@@ -109,25 +218,26 @@ function vHoje(){
   const em7 = new Date(hoje); em7.setDate(em7.getDate()+7);
   const acoes = DB.casos.filter(cs => cs.data_proxima_acao && new Date(cs.data_proxima_acao) <= em7 && cs.fase!=='Encerrado')
     .sort((a,b)=>new Date(a.data_proxima_acao)-new Date(b.data_proxima_acao));
-  const novos = DB.leads.filter(l=>l.status_lead==='Novo')
-    .sort((a,b)=>b.score-a.score);
-  const agHoje = DB.agenda.filter(a=>a.data_confirmada && new Date(a.data_confirmada).toDateString()===new Date().toDateString());
-  let h = '<section id="secAgendaHoje"><h2 style="font-size:19px;margin-bottom:10px">Agenda de hoje</h2>';
+  const novos = DB.leads.filter(l=>l.status_lead==='Novo').sort((a,b)=>b.score-a.score);
+  const agHoje = DB.agenda.filter(a=>a.data_confirmada &&
+    new Date(a.data_confirmada).toDateString()===new Date().toDateString());
+  let h = '<section id="secAgendaHoje"><h2 class="sec">Agenda de hoje</h2>';
   h += agHoje.length ? agHoje.map(a=>`<div class="card item"><div class="linha1">
-      <span class="nome">${esc(nomeDe(a))}</span><span class="util">${fmtDH(a.data_confirmada)}</span></div>
-      <div class="meta">${esc(a.tipo)} · ${esc(a.modalidade||'')}</div></div>`).join('')
+      <span class="nome">${esc(nomeDe(a))}</span>
+      <span class="score">${fmtDH(a.data_confirmada)}</span></div>
+      <div class="meta">${esc(a.tipo)}${a.modalidade?' · '+esc(a.modalidade):''}</div></div>`).join('')
     : '<p class="vazio">Nada agendado para hoje.</p>';
-  h += '</section><section id="secAcoes" style="margin-top:22px"><h2 style="font-size:19px;margin-bottom:10px">Próximas ações (7 dias)</h2>';
+  h += '</section><section id="secAcoes" style="margin-top:26px"><h2 class="sec">Próximas ações (7 dias)</h2>';
   h += acoes.length ? acoes.map(cs => {
       const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
       const atrasada = new Date(cs.data_proxima_acao) < hoje;
       return `<div class="card item ${atrasada?'alertaHoje':''}">
         <div class="linha1"><span class="nome">${esc(cli.nome_completo)}</span>
-        <span class="util" style="color:${atrasada?'var(--erro)':'var(--texto-2)'}">${fmtD(cs.data_proxima_acao)}</span></div>
-        <div class="meta">${esc(cs.proxima_acao)} — <em>${esc(cs.fase)}</em></div>
+        <span class="score" style="color:${atrasada?'var(--erro)':'var(--text-muted)'};font-weight:${atrasada?'700':'400'}">${fmtD(cs.data_proxima_acao)}</span></div>
+        <div class="meta">${esc(cs.proxima_acao)} — ${esc(cs.fase)}</div>
         <div class="acoes"><button class="btn-fantasma" onclick="abrirCaso('${cs.id_caso}')">Abrir caso</button></div></div>`;
-    }).join('') : '<p class="vazio">Nenhuma ação pendente. 🎉</p>';
-  h += '</section><section id="secNovos" style="margin-top:22px"><h2 style="font-size:19px;margin-bottom:10px">Leads aguardando resposta</h2>';
+    }).join('') : '<p class="vazio">Nenhuma ação pendente nos próximos 7 dias.</p>';
+  h += '</section><section id="secNovos" style="margin-top:26px"><h2 class="sec">Contatos aguardando resposta</h2>';
   h += novos.length ? novos.map(cardLead).join('') : '<p class="vazio">Caixa de entrada limpa.</p>';
   return h+'</section>';
 }
@@ -141,14 +251,16 @@ function vLeads(){
     alfa:(a,b)=>String(a.nome).localeCompare(b.nome,'pt-BR')
   }[F.ordem];
   lista.sort(ord);
-  const chipsFaixa = [['','Todas'],['Prioritário','Prioritário'],['Qualificado','Qualificado'],['Em avaliação','Em avaliação'],['Informativo','Informativo']]
+  const chipsFaixa = [['','Todas'],['Prioritário','Prioritário'],['Qualificado','Qualificado'],
+                      ['Em avaliação','Em avaliação'],['Informativo','Informativo']]
     .map(([v,r])=>`<button class="chip ${F.faixa===v?'sel':''}" onclick="F.faixa='${v}';pinta()">${r}</button>`).join('');
   const chipsOrdem = [['score','Prioridade'],['data','Recentes'],['alfa','A–Z']]
     .map(([v,r])=>`<button class="chip ${F.ordem===v?'sel':''}" onclick="F.ordem='${v}';pinta()">${r}</button>`).join('');
   return `<div class="filtros" id="filtrosLeads">
     <div class="chips" role="group" aria-label="Filtrar por faixa">${chipsFaixa}</div>
     <div class="chips" role="group" aria-label="Ordenar">${chipsOrdem}</div></div>` +
-    (lista.length ? lista.map(cardLead).join('') : '<p class="vazio">Nenhum lead nessa combinação de filtros.</p>');
+    (lista.length ? lista.map(cardLead).join('')
+      : '<p class="vazio">Nenhum contato nessa combinação de filtros.</p>');
 }
 
 function cardLead(l){
@@ -156,15 +268,14 @@ function cardLead(l){
   const aguardando = !l.janela_escolhida && janelas.length && /Novo|Contatado/.test(l.status_lead);
   return `<div class="card item" data-lead="${l.id_lead}">
     <div class="linha1"><span class="nome">${esc(l.nome)}</span>
-      <span class="badge ${cls(l.faixa)}">${esc(l.faixa)}</span>
-      <span class="score">${l.score}</span></div>
-    <div class="meta">${esc(l.beneficio_pretendido)} · ${esc(l.cidade||'')} · ${esc(l.status_lead)}
+      <span class="badge ${cls(l.faixa)}">${esc(l.faixa)}</span></div>
+    <div class="meta">${esc(l.beneficio_pretendido)}${l.cidade?' · '+esc(l.cidade):''} · ${esc(l.status_lead)}
       ${l.quem_indicou?` · indicação de ${esc(l.quem_indicou)}`:''}</div>
-    ${l.relato?`<div class="relato">“${esc(String(l.relato).slice(0,220))}${String(l.relato).length>220?'…':''}”</div>`:''}
-    ${aguardando?`<div class="meta" style="margin-top:10px">Horários sugeridos:</div>
-      <div class="acoes">${janelas.map(j=>`<button class="btn" style="font-size:14px" onclick="escolher('${l.id_lead}','${esc(j)}')">${esc(j)}</button>`).join('')}</div>`:''}
+    ${l.relato?`<div class="relato">${esc(String(l.relato).slice(0,220))}${String(l.relato).length>220?'…':''}</div>`:''}
+    ${aguardando?`<div class="meta" style="margin-top:14px;font-weight:600;color:var(--text-main)">Horários sugeridos — toque para confirmar:</div>
+      <div class="acoes">${janelas.map(j=>`<button class="btn" onclick="escolher('${l.id_lead}','${esc(j)}')">${fmtJanela(j)}</button>`).join('')}</div>`:''}
     <div class="acoes">
-      ${l.status_lead==='Consulta realizada'||l.status_lead==='Agendado'
+      ${(l.status_lead==='Consulta realizada'||l.status_lead==='Agendado')
         ?`<button class="btn" onclick="Consulta.abrir('${l.id_lead}')">Modo consulta</button>`:''}
       <button class="btn-fantasma" onclick="Msg.abrir({id_lead:'${l.id_lead}'})">Mensagem</button>
     </div></div>`;
@@ -173,22 +284,22 @@ function cardLead(l){
 function vCasos(){
   let lista = DB.casos.slice();
   if (F.fase) lista = lista.filter(c=>c.fase===F.fase);
-  return `<div class="filtros"><select onchange="F.fase=this.value;pinta()">
-      <option value="">Todas as fases</option>
-      ${DB.config.fases.map(f=>`<option ${F.fase===f?'selected':''}>${f}</option>`).join('')}</select></div>` +
+  const chipsFase = [['','Todas as fases']].concat(DB.config.fases.map(f=>[f,f]))
+    .map(([v,r])=>`<button class="chip ${F.fase===v?'sel':''}" onclick="F.fase='${esc(v)}';pinta()">${esc(r)}</button>`).join('');
+  return `<div class="filtros"><div class="chips" role="group" aria-label="Filtrar por fase">${chipsFase}</div></div>` +
     (lista.length ? lista.map(cs => {
       const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
       const pend = DB.docs.filter(d=>d.id_caso===cs.id_caso && /Pendente|Solicitado/.test(d.status)).length;
       return `<div class="card item" data-caso="${cs.id_caso}">
         <div class="linha1"><span class="nome">${esc(cli.nome_completo)}</span>
-          <span class="badge b-qual">${esc(cs.fase)}</span></div>
+          <span class="badge b-aval">${esc(cs.fase)}</span></div>
         <div class="meta">${esc(cs.tipo_beneficio)} · via ${esc(cs.via)}
           ${cs.numero_requerimento_nb?` · NB ${esc(cs.numero_requerimento_nb)}`:''}
-          ${pend?` · <b style="color:var(--alerta)">${pend} doc(s) pendente(s)</b>`:''}</div>
+          ${pend?` · <strong style="color:var(--alerta)">${pend} documento(s) pendente(s)</strong>`:''}</div>
         <div class="acoes">
           <button class="btn-fantasma" onclick="abrirCaso('${cs.id_caso}')">Detalhes</button>
           <button class="btn-fantasma" onclick="Msg.abrir({id_cliente:'${cs.id_cliente}',id_caso:'${cs.id_caso}'})">Responder status</button>
-          <button class="btn-fantasma" onclick="pdf('${cs.id_caso}',this)">Relatório PDF</button>
+          <button class="btn-fantasma" onclick="pdf('${cs.id_caso}')">Relatório PDF</button>
           <button class="btn-fantasma" onclick="astrea('${cs.id_cliente}')">Exportar p/ Astrea</button>
         </div></div>`;
     }).join('') : '<p class="vazio">Nenhum caso nessa fase.</p>');
@@ -196,98 +307,220 @@ function vCasos(){
 
 function vDocs(){
   const pend = DB.docs.filter(d=>/Pendente|Solicitado/.test(d.status));
-  return '<h2 style="font-size:19px;margin-bottom:10px">Documentos em aberto</h2>' +
+  return '<h2 class="sec">Documentos em aberto</h2>' +
+    '<p class="meta" style="margin:-6px 0 16px">Marque <strong>Recebido</strong> quando o documento chegar, ' +
+    'e <strong>Validado</strong> depois de conferir. O relatório de status do cliente usa exatamente isto.</p>' +
     (pend.length ? pend.map(d => {
       const cs = DB.casos.find(x=>x.id_caso===d.id_caso)||{};
       const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
       return `<div class="card item"><div class="linha1">
         <span class="nome" style="font-size:16px">${esc(d.nome_documento)}</span>
         <span class="badge ${d.status==='Pendente'?'b-prior':'b-aval'}">${esc(d.status)}</span></div>
-      <div class="meta">${esc(cli.nome_completo)} · ${esc(cs.tipo_beneficio||'')}</div>
+      <div class="meta">${esc(cli.nome_completo)}${cs.tipo_beneficio?' · '+esc(cs.tipo_beneficio):''}</div>
       <div class="acoes">
-        <button class="btn-fantasma" onclick="docStatus('${d.id_doc}','Recebido')">Marcar recebido</button>
-        <button class="btn-fantasma" onclick="docStatus('${d.id_doc}','Validado')">Validar</button>
+        <button class="btn-fantasma" onclick="docStatus('${d.id_doc}','Recebido','${esc(d.nome_documento)}','${esc(cli.nome_completo||'')}')">Marcar recebido</button>
+        <button class="btn-fantasma" onclick="docStatus('${d.id_doc}','Validado','${esc(d.nome_documento)}','${esc(cli.nome_completo||'')}')">Validar</button>
       </div></div>`;
-    }).join('') : '<p class="vazio">Nenhum documento pendente. ✓</p>');
+    }).join('') : '<p class="vazio">Nenhum documento pendente.</p>');
 }
 
 /* ---------------- ações ---------------- */
+
 function nomeDe(a){
   if (a.id_cliente){ const c=DB.clientes.find(x=>x.id_cliente===a.id_cliente); if(c) return c.nome_completo; }
   if (a.id_lead){ const l=DB.leads.find(x=>x.id_lead===a.id_lead); if(l) return l.nome; }
   return '';
 }
+
+/** Confirma o horário: grava, cria o evento, convida o cliente e abre a mensagem. */
+
 function escolher(idLead, janela){
-  google.script.run.withSuccessHandler(()=>{ recarregar();
-    Msg.abrir({id_lead:idLead, gatilho:'Consulta confirmada', data:janela.split(' ')[0], hora:janela.split(' ')[1]||''});
-  }).escolherJanela(idLead, janela);
+  mostrarCarregando('Confirmando o horário…');
+  google.script.run
+    .withSuccessHandler(r => {
+      esconderCarregando();
+      recarregar();
+      const cal = r && r.calendario, mail = r && r.emailCliente;
+      const partes = [];
+      partes.push((cal && cal.ok)
+        ? 'O evento entrou no seu Google Agenda.'
+        : '<strong>Atenção:</strong> não consegui criar o evento no Google Agenda — anote manualmente.');
+      partes.push((mail && mail.ok)
+        ? 'A confirmação formal já foi enviada por e-mail ao cliente.'
+        : '<strong>Atenção:</strong> não consegui enviar a confirmação por e-mail ao cliente.');
+      const extra = ' ' + partes.join(' ');
+      dialogo({
+        tipo: (cal && cal.ok) ? 'ok' : 'aviso',
+        titulo: 'Horário confirmado',
+        texto: 'A consulta ficou marcada para <strong>' + fmtJanela(janela) + '</strong>.' + extra +
+               '<br><br>Vou abrir a mensagem de confirmação para você revisar antes de enviar.',
+        rotuloFechar: 'Ver a mensagem',
+        onFechar: () => Msg.abrir({ id_lead:idLead, gatilho:'Consulta confirmada',
+          data: janela.split(' ')[0], hora: janela.split(' ')[1] || '' })
+      });
+    })
+    .withFailureHandler(e => {
+      esconderCarregando();
+      dialogo({ tipo:'erro', titulo:'Não consegui confirmar', texto:String(e && e.message || e) });
+    })
+    .escolherJanela(idLead, janela);
 }
-function docStatus(id, st){ google.script.run.withSuccessHandler(recarregar).mudarStatusDoc(id, st); }
-function pdf(idCaso, btn){
-  btn.textContent='Gerando…'; btn.disabled=true;
-  google.script.run.withSuccessHandler(r=>{ btn.textContent='Relatório PDF'; btn.disabled=false;
-    if(r.ok) window.open(r.url,'_blank'); }).gerarRelatorioPdf(idCaso);
+
+/** Muda o status de um documento e diz onde o efeito aparece. */
+
+function docStatus(id, st, nomeDoc, nomeCli){
+  mostrarCarregando('Atualizando…');
+  google.script.run.withSuccessHandler(() => {
+    esconderCarregando();
+    recarregar();
+    dialogo({ tipo:'ok', titulo:'Documento ' + st.toLowerCase(),
+      texto: '<strong>' + nomeDoc + '</strong>' + (nomeCli ? ' — ' + nomeCli : '') +
+             '.<br><br>Ele sai desta lista e passa a aparecer na ficha do caso, em ' +
+             '<strong>Clientes &amp; Casos → Detalhes</strong>. O relatório de status do cliente já reflete a mudança.' });
+  }).mudarStatusDoc(id, st);
 }
+
+/** Relatório em PDF: véu com desfoque enquanto o servidor trabalha. */
+
+function pdf(idCaso){
+  mostrarCarregando('Gerando o relatório em PDF…');
+  google.script.run
+    .withSuccessHandler(r => {
+      esconderCarregando();
+      if (r && r.ok){
+        dialogo({ tipo:'ok', titulo:'Relatório pronto',
+          texto:'O PDF foi salvo na pasta do cliente no Google Drive. Vou abri-lo em uma nova aba — de lá você pode baixar ou encaminhar.',
+          rotuloFechar:'Abrir o PDF',
+          onFechar: () => window.open(r.url,'_blank') });
+      } else {
+        dialogo({ tipo:'erro', titulo:'Não consegui gerar', texto:'Tente novamente em instantes.' });
+      }
+    })
+    .withFailureHandler(e => {
+      esconderCarregando();
+      dialogo({ tipo:'erro', titulo:'Não consegui gerar', texto:String(e && e.message || e) });
+    })
+    .gerarRelatorioPdf(idCaso);
+}
+
 function astrea(idCliente){
+  mostrarCarregando('Preparando o cadastro…');
   google.script.run.withSuccessHandler(r=>{
+    esconderCarregando();
     modal(`<h3>Exportar para o Astrea</h3>
-      <p class="meta" style="margin-bottom:10px">Copie e cole no cadastro do cliente — ou baixe o CSV para importação em lote.</p>
+      <p class="sub">Copie e cole no cadastro do cliente — ou baixe o CSV para importação em lote.</p>
       <textarea readonly>${esc(r.bloco)}</textarea>
-      <div class="acoes" style="margin-top:12px">
-        <button class="btn" onclick="navigator.clipboard.writeText(this.closest('.modal').querySelector('textarea').value);this.textContent='Copiado ✓'">Copiar</button>
-        <a class="btn-fantasma btn" download="astrea_${r.nome.replace(/\\s+/g,'_')}.csv"
+      <div class="acoes" style="margin-top:14px">
+        <button class="btn" onclick="copiarBloco(this)">Copiar</button>
+        <a class="btn-fantasma" download="astrea_${String(r.nome).replace(/\s+/g,'_')}.csv"
            href="data:text/csv;charset=utf-8,${encodeURIComponent(r.csv)}">Baixar CSV</a>
         <button class="btn-fantasma" onclick="fecharModal()">Fechar</button></div>`);
   }).exportarAstrea(idCliente);
 }
+
+function copiarBloco(btn){
+  const ta = btn.closest('.modal').querySelector('textarea');
+  try { navigator.clipboard.writeText(ta.value); } catch(e) { ta.select(); document.execCommand('copy'); }
+  btn.textContent = 'Copiado';
+}
+
 function abrirCaso(idCaso){
-  const cs = DB.casos.find(x=>x.id_caso===idCaso); const cli=DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
+  const cs = DB.casos.find(x=>x.id_caso===idCaso); if(!cs) return;
+  const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
   const docs = DB.docs.filter(d=>d.id_caso===idCaso);
+  const chipsFase = DB.config.fases
+    .map(f=>`<button class="chip ${cs.fase===f?'sel':''}" onclick="mudarFaseCaso('${idCaso}','${esc(f)}')">${esc(f)}</button>`).join('');
   modal(`<h3>${esc(cli.nome_completo)}</h3>
-    <p class="meta">${esc(cs.tipo_beneficio)} · via ${esc(cs.via)}</p>
-    <div style="margin:14px 0"><label class="util">FASE</label>
-      <select onchange="google.script.run.withSuccessHandler(recarregar).mudarFase('${idCaso}',this.value)">
-        ${DB.config.fases.map(f=>`<option ${cs.fase===f?'selected':''}>${f}</option>`).join('')}</select></div>
-    ${cs.proxima_acao?`<p><b>Próxima ação:</b> ${esc(cs.proxima_acao)} (${fmtD(cs.data_proxima_acao)})</p>`:''}
-    ${cli.link_pasta_drive?`<p style="margin-top:8px"><a href="${esc(cli.link_pasta_drive)}" target="_blank" style="color:var(--gold)">📁 Pasta no Drive</a>
-      <span class="meta"> — cole este link no Astrea como Ligação Externa</span></p>`:''}
-    <div style="margin-top:14px"><label class="util">DOCUMENTOS</label>
-      ${docs.map(d=>`<div class="chk"><label>${esc(d.nome_documento)}
-        <span class="dica">${esc(d.status)}</span></label></div>`).join('')||'<p class="meta">Nenhum.</p>'}</div>
-    <div class="acoes" style="margin-top:14px"><button class="btn-fantasma" onclick="fecharModal()">Fechar</button></div>`);
+    <p class="sub">${esc(cs.tipo_beneficio)} · via ${esc(cs.via)}</p>
+    <span class="rotulo">Fase do processo</span>
+    <div class="chips" style="margin-bottom:18px">${chipsFase}</div>
+    ${cs.proxima_acao?`<p style="margin-bottom:14px"><strong>Próxima ação:</strong> ${esc(cs.proxima_acao)} (${fmtD(cs.data_proxima_acao)})</p>`:''}
+    ${cli.link_pasta_drive?`<span class="rotulo">Documentos do cliente</span>
+      <a class="linkDrive" href="${esc(cli.link_pasta_drive)}" target="_blank" rel="noopener">Abrir a pasta no Google Drive</a>
+      <p class="sub" style="margin-top:8px">Cole este link no Astrea como Ligação Externa — assim os dois sistemas apontam para a mesma pasta.</p>`
+      :`<p class="sub">A pasta no Drive é criada quando o contato vira cliente pelo Modo consulta.</p>`}
+    <div style="margin-top:18px"><span class="rotulo">Checklist de documentos</span>
+      ${docs.length ? docs.map(d=>`<div class="chk"><label>${esc(d.nome_documento)}
+        <span class="dica">${esc(d.status)}</span></label></div>`).join('')
+        : '<p class="sub">Nenhum documento registrado neste caso.</p>'}</div>
+    <div class="acoes" style="margin-top:18px"><button class="btn-fantasma" onclick="fecharModal()">Fechar</button></div>`);
+}
+
+function mudarFaseCaso(idCaso, fase){
+  mostrarCarregando('Atualizando a fase…');
+  google.script.run.withSuccessHandler(()=>{
+    esconderCarregando(); fecharModal();
+    recarregar();
+    dialogo({ tipo:'ok', titulo:'Fase atualizada',
+      texto:'O caso está agora em <strong>' + fase + '</strong>.<br><br>' +
+            'A mudança já aparece em <strong>Clientes &amp; Casos</strong> e entra automaticamente ' +
+            'no próximo relatório de status que você gerar para este cliente.' });
+  }).mudarFase(idCaso, fase);
 }
 
 /* ---------------- mensagens (rascunho sempre) ---------------- */
+
 const Msg = {
   abrir(alvo){
     const tpls = DB.templates.filter(t=>String(t.ativo)==='Sim');
+    if (!tpls.length){
+      dialogo({ tipo:'aviso', titulo:'Nenhum modelo ativo',
+        texto:'Ative ao menos um modelo na aba <strong>Templates</strong> da planilha.' });
+      return;
+    }
     const pre = alvo.gatilho ? tpls.find(t=>t.gatilho===alvo.gatilho) : null;
+    const chipsTpl = tpls.map(t=>`<button class="chip ${pre&&pre.id_template===t.id_template?'sel':''}"
+        data-tpl="${t.id_template}" onclick="Msg.trocar(this)">${esc(t.gatilho)}</button>`).join('');
     modal(`<h3>Nova mensagem</h3>
-      <p class="meta" style="margin-bottom:10px">O sistema escreve o rascunho. <b>Você revisa e envia.</b> Nada sai sozinho.</p>
-      <select id="msgTpl">${tpls.map(t=>`<option value="${t.id_template}" ${pre&&pre.id_template===t.id_template?'selected':''}>${esc(t.gatilho)}</option>`).join('')}</select>
-      <textarea id="msgCorpo" style="margin-top:10px" placeholder="Escolha um modelo acima…"></textarea>
-      <div class="acoes" style="margin-top:12px">
-        <a id="msgWa" class="btn" target="_blank" style="display:none">Abrir no WhatsApp</a>
+      <p class="sub">O sistema escreve o rascunho. <strong>Você revisa e envia.</strong> Nada sai sozinho.</p>
+      <span class="rotulo">Modelo</span>
+      <div class="chips" id="msgChips" style="margin-bottom:14px">${chipsTpl}</div>
+      <textarea id="msgCorpo" placeholder="Escolha um modelo acima…"></textarea>
+      <div class="acoes" style="margin-top:14px">
+        <a id="msgWa" class="btn" target="_blank" rel="noopener" style="display:none">Abrir no WhatsApp</a>
         <button id="msgMail" class="btn-fantasma" style="display:none">Rascunho no Gmail</button>
         <button class="btn-fantasma" onclick="fecharModal()">Cancelar</button></div>`);
-    const gerar = () => google.script.run.withSuccessHandler(r=>{
-        $('msgCorpo').value = r.corpo;
-        const wa=$('msgWa'), ml=$('msgMail');
-        wa.style.display = r.waLink?'inline-block':'none';
-        ml.style.display = r.email?'inline-block':'none';
-        wa.onclick = () => { wa.href='https://wa.me/'+r.telefone.replace(/\D/g,'')+'?text='+encodeURIComponent($('msgCorpo').value); };
-        wa.href = r.waLink;
-        ml.onclick = () => google.script.run.withSuccessHandler(()=>{ml.textContent='Rascunho criado ✓'})
-          .criarRascunhoEmail(r.email, r.assunto||'Sobre o seu caso', $('msgCorpo').value);
-      }).gerarMensagem($('msgTpl').value, alvo);
-    $('msgTpl').onchange = gerar; gerar();
+    Msg._alvo = alvo;
+    const inicial = (pre && pre.id_template) || tpls[0].id_template;
+    if (!pre) document.querySelector('#msgChips .chip').classList.add('sel');
+    Msg.gerar(inicial);
+  },
+  trocar(btn){
+    document.querySelectorAll('#msgChips .chip').forEach(c=>c.classList.remove('sel'));
+    btn.classList.add('sel');
+    Msg.gerar(btn.dataset.tpl);
+  },
+  gerar(idTpl){
+    const ta = $('msgCorpo'); if(ta) ta.value = 'Preparando…';
+    google.script.run.withSuccessHandler(r=>{
+      $('msgCorpo').value = r.corpo;
+      const wa=$('msgWa'), ml=$('msgMail');
+      wa.style.display = r.waLink ? 'inline-flex' : 'none';
+      ml.style.display = r.email ? 'inline-flex' : 'none';
+      /* o link é remontado no clique para levar o texto JÁ EDITADO por ela */
+      wa.onclick = () => {
+        wa.href = 'https://wa.me/' + String(r.telefone).replace(/\D/g,'') +
+                  '?text=' + encodeURIComponent($('msgCorpo').value);
+      };
+      wa.href = r.waLink;
+      ml.onclick = () => {
+        ml.disabled = true; ml.textContent = 'Criando…';
+        google.script.run.withSuccessHandler(()=>{
+          fecharModal();
+          dialogo({ tipo:'ok', titulo:'Rascunho criado',
+            texto:'A mensagem está na pasta <strong>Rascunhos</strong> do seu Gmail, endereçada a ' +
+                  r.email + '. Abra, releia e envie quando quiser.' });
+        }).criarRascunhoEmail(r.email, r.assunto || 'Sobre o seu caso', $('msgCorpo').value);
+      };
+    }).gerarMensagem(idTpl, Msg._alvo);
   }
 };
 
 /* ---------------- modo consulta ---------------- */
+
 const Consulta = {
   abrir(idLead){
-    const l = DB.leads.find(x=>x.id_lead===idLead);
+    const l = DB.leads.find(x=>x.id_lead===idLead); if(!l) return;
     const itens = ['Confirmei a história contributiva e as datas principais',
       'Identifiquei o benefício adequado (ou redirecionei)',
       'Verifiquei requerimentos anteriores e negativas',
@@ -295,32 +528,54 @@ const Consulta = {
       'Apresentei os honorários e a forma de contratação',
       'Cliente decidiu contratar'];
     modal(`<h3>Consulta · ${esc(l.nome)}</h3>
-      <p class="meta">${esc(l.beneficio_pretendido)} · score ${l.score} (${esc(l.faixa)})</p>
-      ${l.relato?`<div class="relato">“${esc(l.relato)}”</div>`:''}
-      <div style="margin-top:12px">${itens.map((t,i)=>`<div class="chk">
+      <p class="sub">${esc(l.beneficio_pretendido)}${l.telefone?' · '+esc(l.telefone):''}</p>
+      ${l.relato?`<div class="relato">${esc(l.relato)}</div>`:''}
+      <div style="margin-top:16px"><span class="rotulo">Roteiro da conversa</span>
+        ${itens.map((t,i)=>`<div class="chk">
         <input type="checkbox" id="ck${i}"><label for="ck${i}">${t}</label></div>`).join('')}</div>
-      <textarea id="ckObs" style="margin-top:12px" placeholder="Anotações da consulta (ficam no lead)"></textarea>
-      <div class="acoes" style="margin-top:14px">
-        <button class="btn" onclick="Consulta.fechar('${idLead}',true)">Contratou → gerar caso + checklist</button>
+      <textarea id="ckObs" style="margin-top:14px" placeholder="Anotações da consulta (ficam registradas no contato)"></textarea>
+      <div class="acoes" style="margin-top:16px">
+        <button class="btn" onclick="Consulta.fechar('${idLead}',true)">Contratou — gerar caso e checklist</button>
         <button class="btn-fantasma" onclick="Consulta.fechar('${idLead}',false)">Não contratou</button>
         <button class="btn-fantasma" onclick="fecharModal()">Voltar</button></div>`);
   },
   fechar(idLead, contratou){
-    const obs = $('ckObs').value;
+    const obs = ($('ckObs') && $('ckObs').value) || '';
     if (obs) google.script.run.salvarObservacaoLead(idLead, obs);
     if (!contratou){
-      google.script.run.withSuccessHandler(()=>{fecharModal();recarregar();}).mudarStatusLead(idLead,'Não convertido');
+      mostrarCarregando('Registrando…');
+      google.script.run.withSuccessHandler(()=>{
+        esconderCarregando(); fecharModal(); recarregar();
+        dialogo({ tipo:'ok', titulo:'Registrado',
+          texto:'O contato foi marcado como <strong>não convertido</strong> e continua na aba ' +
+                '<strong>Leads</strong> — nada se perde, e você pode retomar quando fizer sentido.' });
+      }).mudarStatusLead(idLead,'Não convertido');
       return;
     }
+    mostrarCarregando('Criando o cliente, o caso e a pasta no Drive…');
     google.script.run.withSuccessHandler(r=>{
-      fecharModal(); recarregar();
-      if (r.ok) Msg.abrir({id_cliente:r.id_cliente, id_caso:r.id_caso, gatilho:'Envio do checklist de documentos'});
+      esconderCarregando(); fecharModal(); recarregar();
+      if (!r || !r.ok) return dialogo({ tipo:'erro', titulo:'Não consegui converter' });
+      dialogo({ tipo:'ok', titulo:'Cliente criado',
+        texto:'Foi criado o cliente <strong>' + esc(r.nome) + '</strong>, o caso ' + r.id_caso +
+              ', a pasta no Google Drive com as 5 subpastas' +
+              (r.docs ? ' e o checklist de ' + r.docs + ' documento(s)' : '') + '.' +
+              '<br><br>Ele já aparece em <strong>Clientes &amp; Casos</strong>. ' +
+              'Vou abrir a mensagem com o checklist para você revisar e enviar.',
+        rotuloFechar:'Ver a mensagem',
+        onFechar: () => Msg.abrir({ id_cliente:r.id_cliente, id_caso:r.id_caso,
+          gatilho:'Envio do checklist de documentos' }) });
     }).converterLead(idLead, {});
   }
 };
 
 /* ---------------- modal util ---------------- */
-function modal(html){ $('zonaModal').innerHTML = `<div class="veu" onclick="if(event.target===this)fecharModal()"><div class="modal">${html}</div></div>`; }
+
+function modal(html){
+  $('zonaModal').innerHTML =
+    '<div class="veu" onclick="if(event.target===this)fecharModal()"><div class="modal">' + html + '</div></div>';
+}
+
 function fecharModal(){ $('zonaModal').innerHTML=''; }
 </script>
 </body></html>

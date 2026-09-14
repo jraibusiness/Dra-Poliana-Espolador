@@ -1,6 +1,7 @@
 <!-- ============================================================
   Tour.html · Onboarding guiado (D-006)
   Overlay + spotlight + balões numerados. Vanilla JS, zero deps.
+  Os estilos vivem no <style> do Painel.html.
   Reativável a qualquer momento pelo botão "?" no topo.
 ============================================================= -->
 <div id="tourVeu" class="oculto">
@@ -10,72 +11,75 @@
     <span class="util" id="tourPasso"></span>
     <p id="tourTexto"></p>
     <div class="nav">
-      <button class="btn-fantasma" id="tourSair">Pular tour</button>
+      <button class="btn-fantasma" id="tourSair">Pular</button>
       <div style="display:flex;gap:8px">
-        <button class="btn-fantasma" id="tourAnt">←</button>
-        <button class="btn" id="tourProx">Próximo →</button>
+        <button class="btn-fantasma" id="tourAnt">&larr;</button>
+        <button class="btn" id="tourProx">Próximo</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+
 const Tour = (() => {
   /* Cada passo: aba a ativar, seletor a iluminar, texto.
-     Personagens citados = os do seed (data/README.md). */
+     Os nomes citados são os personagens fictícios do modo demonstração. */
   const PASSOS = [
     { aba:'hoje', sel:'.topo',
-      t:'Bem-vinda, Dra. Poliana! Este é o seu painel. Vou te mostrar como ele trabalha para você — leva 2 minutos. Tudo o que você vê usa personagens fictícios, para você explorar à vontade.' },
+      t:'Bem-vinda, Dra. Poliana. Este é o seu painel — dois minutos e você conhece o caminho inteiro. Tudo o que aparece aqui usa nomes fictícios, então pode explorar sem receio de mexer em caso real.' },
     { aba:'hoje', sel:'#secAgendaHoje',
-      t:'A tela "Hoje" abre primeiro de propósito: agenda do dia, ações com prazo e leads esperando. É o seu dia em uma tela — sem procurar nada.' },
+      t:'A tela "Hoje" abre primeiro de propósito: a sua agenda do dia, os prazos que se aproximam e quem está esperando resposta. O seu dia em uma tela, sem procurar nada.' },
     { aba:'hoje', sel:'#secAcoes',
-      t:'Aqui vivem os prazos. Repare no caso do Osvaldo: o INSS abriu exigência com prazo. O sistema não deixa você depender da memória — o que vence aparece em vermelho.' },
+      t:'Aqui vivem os prazos. Repare no caso do Osvaldo: o INSS abriu exigência com data marcada. O que estiver vencido aparece em vermelho, com uma faixa na lateral — você não depende da memória.' },
     { aba:'leads', sel:'#filtrosLeads',
-      t:'Na aba Leads, você filtra por faixa e ordena por prioridade, data ou A–Z. Os aquecidos ficam juntos; os frios não se perdem.' },
+      t:'Na aba Leads, os botões filtram por prioridade e mudam a ordem da lista. São botões, e não menus, de propósito: aparecem no celular e em chamada de vídeo, sem sumir.' },
     { aba:'leads', sel:'.item[data-lead="L001"]',
-      t:'A Iolanda chegou pela sua página de indicações. O sistema leu as respostas dela e calculou a prioridade: pensão negada + sem renda + indicação nominal. A conta é transparente — e os pesos são SEUS, editáveis na planilha.' },
+      t:'A Iolanda chegou pela sua página de indicações. O sistema leu as respostas dela e calculou a prioridade — benefício negado, sem renda e indicação nominal. A conta é aberta, e os pesos são seus: dá para mudar na planilha.' },
     { aba:'leads', sel:'.item[data-lead="L001"] .acoes',
-      t:'Ela sugeriu 3 horários. Você escolhe um com um clique — e o sistema já escreve a mensagem de confirmação para você revisar e enviar pelo SEU WhatsApp. Nada, nunca, sai sem você ler antes.' },
+      t:'Ela sugeriu três horários. Um toque confirma: o evento entra no seu Google Agenda, o convite vai para o cliente, e a mensagem de confirmação abre para você reler antes de enviar. Nada sai sem você ver antes.' },
     { aba:'leads', sel:'.item[data-lead="L003"]',
-      t:'O Wilson já está agendado. Na hora da conversa, o botão "Modo consulta" abre um roteiro com checkboxes; ao final, um clique gera o caso e envia o checklist de documentos do benefício certo.' },
+      t:'O Wilson já está agendado — por isso apareceu o botão "Modo consulta". Ele abre um roteiro com marcações para acompanhar a conversa; ao final, um toque cria o cliente, o caso, a pasta no Drive e o checklist do benefício certo.' },
     { aba:'casos', sel:'.item[data-caso="CS002"]',
-      t:'Clientes & Casos usa as mesmas etiquetas que você já usa no Astrea — "Aguardando perícia", "Exigência". A Adriana tem perícia dia 30/07: há um modelo pronto de preparação para enviar a ela.' },
+      t:'Clientes & Casos usa as mesmas etiquetas do Astrea — "Aguardando perícia", "Exigência". Você reconhece o vocabulário porque ele é o seu. A Adriana tem perícia marcada e já existe um modelo de preparação pronto para ela.' },
     { aba:'casos', sel:'.item[data-caso="CS005"]',
-      t:'A Cleuza entrou com pontuação baixa — e o caso foi DEFERIDO. Lição importante: a pontuação organiza a sua atenção; quem avalia mérito é você, sempre. O sistema jamais opina sobre direito.' },
+      t:'A Cleuza entrou com pontuação baixa — e o caso foi deferido. Isso é proposital neste tour: a pontuação organiza a ordem da sua atenção, nunca o mérito. Quem avalia direito é você, sempre.' },
     { aba:'casos', sel:'.item[data-caso="CS002"] .acoes',
-      t:'"Responder status" transforma o "Dra., e o meu processo?" em um clique. "Relatório PDF" gera um documento formal na pasta do cliente. "Exportar p/ Astrea" copia o cadastro completo — você nunca digita duas vezes.' },
+      t:'"Responder status" transforma o "Dra., e o meu processo?" em um toque. "Relatório PDF" gera um documento formal direto na pasta do cliente. "Exportar p/ Astrea" copia o cadastro inteiro — você nunca digita duas vezes.' },
     { aba:'docs', sel:'main',
-      t:'E aqui, tudo o que está faltando de documento, em um só lugar. Pronto! Explore à vontade — e quando quiser rever este tour, toque no botão "?" lá em cima. 💛' }
+      t:'E aqui, tudo o que falta de documento, em um lugar só. É isto que mantém o relatório de status sempre em dia. Pronto — explore à vontade. Para rever este tour, toque no "?" lá em cima.' }
   ];
   let i = 0, ativo = false;
-
   function el(s){ return document.querySelector(s); }
   function mostrar(){
     const p = PASSOS[i];
-    // troca de aba se necessário
-    const btn = document.querySelector(`#abas button[data-aba="${p.aba}"]`);
+    /* troca de aba se necessário */
+    const btn = document.querySelector('#abas button[data-aba="' + p.aba + '"]');
     if (btn && !btn.classList.contains('sel')) btn.click();
     requestAnimationFrame(() => setTimeout(() => {
-      let alvo = el(p.sel) || el('main');
+      const alvo = el(p.sel) || el('main');
+      if (!alvo) return;
       alvo.scrollIntoView({block:'center', behavior:'auto'});   // instantâneo: medição estável
       const r = alvo.getBoundingClientRect();
       const foco = el('#tourFoco');
-      foco.style.top=(r.top-6)+'px'; foco.style.left=(r.left-6)+'px';
-      foco.style.width=(r.width+12)+'px'; foco.style.height=(r.height+12)+'px';
+      foco.style.top    = (r.top - 6) + 'px';
+      foco.style.left   = (r.left - 6) + 'px';
+      foco.style.width  = (r.width + 12) + 'px';
+      foco.style.height = (r.height + 12) + 'px';
       const balao = el('#tourBalao');
-      el('#tourPasso').textContent = 'PASSO '+(i+1)+' DE '+PASSOS.length;
+      el('#tourPasso').textContent = 'PASSO ' + (i+1) + ' DE ' + PASSOS.length;
       el('#tourTexto').textContent = p.t;
-      el('#tourAnt').style.visibility = i===0?'hidden':'visible';
-      el('#tourProx').textContent = i===PASSOS.length-1 ? 'Concluir ✓' : 'Próximo →';
+      el('#tourAnt').style.visibility = i === 0 ? 'hidden' : 'visible';
+      el('#tourProx').textContent = i === PASSOS.length - 1 ? 'Concluir' : 'Próximo';
       balao.style.bottom = '';
       const hB = balao.offsetHeight || 180;
-      let top = (r.bottom + 190 < window.innerHeight) ? r.bottom + 14 : r.top - hB - 14;
+      let top = (r.bottom + hB + 30 < window.innerHeight) ? r.bottom + 14 : r.top - hB - 14;
       top = Math.max(10, Math.min(top, window.innerHeight - hB - 10));   // clamp: nunca fora da tela
-      balao.style.top = top+'px';
-      balao.style.left = Math.max(10, Math.min(r.left, window.innerWidth-340))+'px';
-    }, 120));
+      balao.style.top  = top + 'px';
+      balao.style.left = Math.max(10, Math.min(r.left, window.innerWidth - 340)) + 'px';
+    }, 130));
   }
-  function iniciar(manual){
+  function iniciar(){
     i = 0; ativo = true;
     el('#tourVeu').classList.remove('oculto');
     mostrar();
@@ -86,16 +90,21 @@ const Tour = (() => {
     try { localStorage.setItem('tourVisto','1'); } catch(e) {}
   }
   function ligarBotoes(){
-    el('#tourProx').onclick = () => { if (i>=PASSOS.length-1) return sair(); i++; mostrar(); };
-    el('#tourAnt').onclick  = () => { if (i>0){ i--; mostrar(); } };
+    el('#tourProx').onclick = () => { if (i >= PASSOS.length - 1) return sair(); i++; mostrar(); };
+    el('#tourAnt').onclick  = () => { if (i > 0){ i--; mostrar(); } };
     el('#tourSair').onclick = sair;
+    document.addEventListener('keydown', e => {
+      if (!ativo) return;
+      if (e.key === 'Escape') sair();
+      if (e.key === 'ArrowRight'){ if (i < PASSOS.length - 1){ i++; mostrar(); } }
+      if (e.key === 'ArrowLeft'){ if (i > 0){ i--; mostrar(); } }
+    });
     window.addEventListener('resize', () => { if (ativo) mostrar(); });
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', ligarBotoes);
-  } else {
-    ligarBotoes();
-  }
+  /* Registro imediato quando o DOM já está pronto — o listener de
+     DOMContentLoaded sozinho pode nunca disparar dentro do iframe do GAS. */
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ligarBotoes);
+  else ligarBotoes();
   return { iniciar };
 })();
 </script>

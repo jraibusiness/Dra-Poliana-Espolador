@@ -1,36 +1,217 @@
 <!-- ============================================================
-  Estilo.html · ÚNICO lugar onde a identidade visual vive (D-005)
-  Re-skin para a marca da Dra. Poliana = trocar o bloco :root
+  Estilo.html · Identidade Visual + base compartilhada
+  Regras da casa (Opus AI): mobile-first sempre; mínimo de cliques
+  e de digitação; nenhum controle com aparência padrão do sistema.
 ============================================================= -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --bg:#0F141E; --noir:#0A0E16; --gold:#C4A264; --gold-suave:rgba(196,162,100,.14);
-  --texto:#F0EDE6; --texto-2:#9AA3B2; --card:#151B27; --borda:#242C3A;
-  --ok:#5FAE7C; --alerta:#D98E5F; --erro:#C86A6A; --info:#6E8BB8;
-  --font-display:'Cinzel',serif; --font-corpo:'EB Garamond',serif; --font-util:'Space Mono',monospace;
-  --raio:10px;
+  --bg-app:#F8FAFC; --bg-header:#FFFFFF; --bg-card:#FFFFFF;
+  --text-main:#1E293B; --text-muted:#64748B;
+  --primary:#52091c; --primary-hover:#7a102b;
+  --primary-08:rgba(82,9,28,.08); --primary-16:rgba(82,9,28,.16);
+  --borda:#E2E8F0; --borda-forte:#CBD5E1;
+  /* Escala de prioridade — quente -> frio, legivel e sobria.
+     Convive com o vinho da marca sem competir com ele. */
+  --p1:#B91C1C; --p1-bg:#FEF2F2; --p1-bd:#FECACA;
+  --p2:#B45309; --p2-bg:#FFFBEB; --p2-bd:#FDE68A;
+  --p3:#1D4ED8; --p3-bg:#EFF6FF; --p3-bd:#BFDBFE;
+  --p4:#475569; --p4-bg:#F1F5F9; --p4-bd:#E2E8F0;
+  --ok:#047857; --alerta:#B45309; --erro:#B91C1C; --info:#1D4ED8;
+  --font-display:'Lexend',sans-serif; --font-corpo:'Inter',sans-serif; --font-util:'Space Mono',monospace;
+  --raio:10px; --raio-lg:16px;
+  --sombra:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --sombra-lg:0 10px 15px -3px rgba(16,24,40,.08), 0 4px 6px -4px rgba(16,24,40,.05);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--texto);font-family:var(--font-corpo);font-size:17px;line-height:1.55;min-height:100vh}
-h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:.02em}
-small,.util{font-family:var(--font-util);font-size:12px;letter-spacing:.04em}
-button{font-family:var(--font-corpo);cursor:pointer;border:none;border-radius:var(--raio)}
-input,select,textarea{font-family:var(--font-corpo);font-size:17px;width:100%;padding:13px 14px;background:var(--noir);color:var(--texto);border:1px solid var(--borda);border-radius:var(--raio);outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--gold)}
-.btn{display:inline-block;padding:14px 26px;background:var(--gold);color:var(--noir);font-weight:500;font-size:17px;text-align:center;text-decoration:none}
-.btn:disabled{opacity:.4;cursor:default}
-.btn-fantasma{background:transparent;color:var(--texto-2);border:1px solid var(--borda);padding:13px 22px}
-.card{background:var(--card);border:1px solid var(--borda);border-radius:var(--raio);padding:18px}
-.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-family:var(--font-util);font-size:11px;letter-spacing:.05em}
-.b-prior{background:rgba(200,106,106,.16);color:#E29A9A}
-.b-qual{background:var(--gold-suave);color:var(--gold)}
-.b-aval{background:rgba(110,139,184,.16);color:#9FB4D6}
-.b-info{background:rgba(154,163,178,.14);color:var(--texto-2)}
-.lgpd{display:flex;gap:8px;align-items:flex-start;justify-content:center;padding:16px;color:var(--texto-2);font-size:13.5px;text-align:center;border-top:1px solid var(--borda);margin-top:28px}
+body{background:var(--bg-app);color:var(--text-main);font-family:var(--font-corpo);
+  font-size:16px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-display);font-weight:600;line-height:1.25}
+small,.util{font-family:var(--font-util);font-size:12px;letter-spacing:.02em}
+
+/* Controles de formulario - nunca herdam a aparencia do sistema operacional.
+   (A ausencia desta regra era a causa dos campos "cinza chumbo".) */
+input,select,textarea{
+  font-family:var(--font-corpo); font-size:16px; /* 16px evita zoom automatico no iOS */
+  padding:12px 14px; width:100%;
+  border:1.5px solid var(--borda); border-radius:var(--raio);
+  background:#FFFFFF; color:var(--text-main); outline:none;
+  transition:border-color .15s, box-shadow .15s;
+  -webkit-appearance:none; appearance:none;
+}
+select{
+  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; padding-right:40px;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-08)}
+button{font-family:var(--font-corpo);cursor:pointer;border:none}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+::selection{background:var(--primary);color:#fff}
+
+/* Botoes - alvo de toque minimo de 46px (acessibilidade movel) */
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:46px;padding:12px 22px;background:var(--primary);color:#fff;
+  font-weight:600;font-size:15px;text-align:center;text-decoration:none;
+  border-radius:var(--raio);border:none;cursor:pointer;transition:background .15s,transform .1s}
+
+.btn:hover{background:var(--primary-hover)}
+
+.btn:active{transform:scale(.985)}
+
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.btn-fantasma{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:46px;padding:12px 22px;background:#FFFFFF;color:var(--text-main);
+  border:1.5px solid var(--borda);border-radius:var(--raio);
+  font-weight:500;font-size:15px;cursor:pointer;text-decoration:none;transition:all .15s}
+
+.btn-fantasma:hover{background:var(--bg-app);border-color:var(--borda-forte)}
+
+/* Cartao base - usado pelo Painel */
+
+.card{background:var(--bg-card);border:1px solid var(--borda);border-radius:var(--raio-lg);
+  padding:18px;box-shadow:var(--sombra)}
+
+/* Selos de classificacao */
+
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;
+  font-family:var(--font-corpo);font-size:12px;font-weight:600;letter-spacing:.01em;
+  border:1px solid transparent;white-space:nowrap}
+
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+
+.b-prior{background:var(--p1-bg);color:var(--p1);border-color:var(--p1-bd)}
+
+.b-qual {background:var(--p2-bg);color:var(--p2);border-color:var(--p2-bd)}
+
+.b-aval {background:var(--p3-bg);color:var(--p3);border-color:var(--p3-bd)}
+
+.b-info {background:var(--p4-bg);color:var(--p4);border-color:var(--p4-bd)}
+
+/* Indicadores de carregamento */
+
+.loading{position:relative;color:transparent!important;pointer-events:none}
+
+.loading::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:18px;
+  margin:-9px 0 0 -9px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite}
+
+.btn-fantasma.loading::after{border-color:rgba(0,0,0,.12);border-top-color:var(--text-main)}
+
+@keyframes spin{100%{transform:rotate(360deg)}}
+
+.spinner{width:22px;height:22px;border:2.5px solid var(--borda);border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+
+.carregando-bloco{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:56px 20px;color:var(--text-muted);text-align:center}
+
+/* Veu de processamento em tela cheia - com desfoque do fundo */
+
+#veuCarregando{position:fixed;inset:0;z-index:2000;background:rgba(248,250,252,.72);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:none;place-items:center;text-align:center;padding:24px}
+
+#veuCarregando.on{display:grid}
+
+#veuCarregando .spinner{width:38px;height:38px;border-width:3px}
+
+#veuCarregando p{margin-top:16px;color:var(--text-muted);font-size:15px}
+
+/* Dialogos do sistema - substituem alert()/confirm() nativos,
+   que quebram a identidade visual e ficam ruins no celular. */
+
+#zonaDialogo{position:fixed;inset:0;z-index:3000;display:none;place-items:center;
+  padding:20px;background:rgba(15,23,42,.55)}
+
+#zonaDialogo.on{display:grid}
+
+.dlg{background:#fff;border-radius:var(--raio-lg);box-shadow:var(--sombra-lg);
+  width:100%;max-width:400px;padding:26px 24px;text-align:center;
+  animation:dlgSurge .22s cubic-bezier(.16,1,.3,1)}
+
+@keyframes dlgSurge{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+
+.dlg-icone{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  margin:0 auto 16px;font-size:24px;font-weight:700;background:var(--primary-08);color:var(--primary)}
+
+.dlg-icone.aviso{background:var(--p2-bg);color:var(--p2)}
+
+.dlg-icone.erro{background:var(--p1-bg);color:var(--p1)}
+
+.dlg-icone.ok{background:#ECFDF5;color:var(--ok)}
+
+.dlg h4{font-size:19px;margin-bottom:8px;color:var(--text-main)}
+
+.dlg p{color:var(--text-muted);font-size:15px;margin-bottom:22px}
+
+.dlg .dlg-acoes{display:flex;gap:10px;flex-direction:column}
+
+.dlg .dlg-acoes .btn,.dlg .dlg-acoes .btn-fantasma{width:100%}
+
+/* Rodape LGPD */
+
+.lgpd{text-align:center;color:var(--text-muted);font-size:12.5px;line-height:1.65;
+  padding-top:20px;border-top:1px solid var(--borda)}
+
+.lgpd strong{color:var(--text-main);font-weight:600}
+
+.lgpd .lgpd-artigos{display:block;margin-top:6px;font-size:11.5px;opacity:.85}
+
 .oculto{display:none!important}
-::selection{background:var(--gold);color:var(--noir)}
-@media (min-width:700px){body{font-size:18px}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
 </style>
+<div id="veuCarregando"><div><div class="spinner"></div><p id="veuCarregandoTxt">Processando...</p></div></div>
+<div id="zonaDialogo"></div>
+
+<script>
+
+/* ---- Utilidades compartilhadas (LP e Painel) ---- */
+
+function _q(id){ return document.getElementById(id); }
+
+/** Veu de processamento em tela cheia. */
+
+function mostrarCarregando(msg){
+  var v=_q('veuCarregando'); if(!v) return;
+  if(msg) _q('veuCarregandoTxt').textContent = msg;
+  v.classList.add('on');
+}
+
+function esconderCarregando(){ var v=_q('veuCarregando'); if(v) v.classList.remove('on'); }
+
+/** Dialogo na identidade da plataforma. Substitui alert()/confirm(). */
+
+function dialogo(opts){
+  var o = opts || {};
+  var z = _q('zonaDialogo'); if(!z) return;
+  var tipo = o.tipo || 'aviso';
+  var icones = { aviso:'!', erro:'x', ok:'\u2713', info:'i' };
+  z.innerHTML =
+    '<div class="dlg" role="alertdialog" aria-modal="true">' +
+      '<div class="dlg-icone ' + tipo + '">' + (o.icone || icones[tipo] || '!') + '</div>' +
+      '<h4>' + (o.titulo || 'Atencao') + '</h4>' +
+      (o.texto ? '<p>' + o.texto + '</p>' : '') +
+      '<div class="dlg-acoes">' +
+        (o.onConfirmar ? '<button class="btn" id="dlgOk">' + (o.rotuloConfirmar || 'Confirmar') + '</button>' : '') +
+        '<button class="' + (o.onConfirmar ? 'btn-fantasma' : 'btn') + '" id="dlgFechar">' +
+          (o.rotuloFechar || (o.onConfirmar ? 'Cancelar' : 'Entendi')) + '</button>' +
+      '</div>' +
+    '</div>';
+  z.classList.add('on');
+  _q('dlgFechar').onclick = function(){ fecharDialogo(); if(o.onFechar) o.onFechar(); };
+  if(o.onConfirmar) _q('dlgOk').onclick = function(){ fecharDialogo(); o.onConfirmar(); };
+  var alvo = _q('dlgOk') || _q('dlgFechar'); if(alvo) alvo.focus();
+}
+
+function fecharDialogo(){ var z=_q('zonaDialogo'); if(z){ z.classList.remove('on'); z.innerHTML=''; } }
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') fecharDialogo(); });
+</script>

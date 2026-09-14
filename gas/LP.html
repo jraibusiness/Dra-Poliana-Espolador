@@ -1,215 +1,662 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><?!= include('Estilo'); ?>
+<head>
+<?!= include('Estilo'); ?>
+
 <style>
-.envelope{max-width:640px;margin:0 auto;padding:28px 20px 0;min-height:100vh;display:flex;flex-direction:column}
-header{text-align:center;padding:16px 0 26px}
-header h1{font-size:26px;color:var(--gold)}
-header p{color:var(--texto-2);margin-top:6px;font-size:16px}
-.hero h2{font-size:22px;line-height:1.35;text-align:center;margin-bottom:14px}
-.hero p{text-align:center;color:var(--texto-2);margin-bottom:26px}
-.progresso{height:4px;background:var(--borda);border-radius:99px;margin:6px 0 26px;overflow:hidden}
-.progresso div{height:100%;background:var(--gold);width:0;transition:width .35s ease}
-.tela{display:none;animation:surge .3s ease}
-.tela.ativa{display:block}
-@keyframes surge{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.pergunta{font-family:var(--font-display);font-size:20px;margin-bottom:18px}
-.opcao{display:block;width:100%;text-align:left;padding:15px 16px;margin-bottom:10px;background:var(--card);
-  color:var(--texto);border:1px solid var(--borda);border-radius:var(--raio);font-size:17px}
-.opcao.sel{border-color:var(--gold);background:var(--gold-suave)}
-.nav{display:flex;gap:10px;justify-content:space-between;margin-top:22px}
-.dica{color:var(--texto-2);font-size:14.5px;margin-top:8px}
-.janela-linha{display:flex;gap:8px;margin-bottom:10px}
-.janela-linha input{flex:1}
+
+.envelope{max-width:640px;margin:0 auto;padding:28px 18px 40px;min-height:100vh;display:flex;flex-direction:column}
+header{text-align:center;margin-bottom:28px}
+header h1{font-size:22px;color:var(--primary);margin-bottom:4px;letter-spacing:-.01em}
+header p{color:var(--text-muted);font-size:14px}
+
+.hero{text-align:center}
+
+.hero h2{font-size:26px;line-height:1.3;margin-bottom:16px;color:var(--text-main);letter-spacing:-.02em}
+
+.hero p{color:var(--text-muted);margin-bottom:26px;font-size:16px}
+
+.progresso{height:6px;background:var(--borda);border-radius:99px;margin:8px 0 28px;overflow:hidden}
+
+.progresso div{height:100%;background:var(--primary);width:0;transition:width .35s cubic-bezier(.16,1,.3,1);border-radius:99px}
+
+.tela{display:none}
+
+.tela.on{display:block;animation:surge .32s cubic-bezier(.16,1,.3,1)}
+
+@keyframes surge{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.pergunta{font-family:var(--font-display);font-size:22px;margin-bottom:6px;color:var(--text-main);
+  font-weight:600;line-height:1.3;text-align:center;letter-spacing:-.01em}
+
+.sub{color:var(--text-muted);font-size:14.5px;text-align:center;margin-bottom:22px}
+
+.dica{color:var(--text-muted);font-size:13.5px;margin-top:10px;text-align:center}
+
+.campo{max-width:460px;margin:0 auto;display:block}
+
+.campo input,.campo textarea{text-align:center;font-size:17px;padding:15px 16px}
+
+.campo textarea{text-align:left;min-height:130px;resize:vertical;line-height:1.6}
+
+/* Opcoes verticais */
+
+.opcoes{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+
+.opcao{display:block;width:100%;text-align:left;padding:15px 18px;background:#fff;color:var(--text-main);
+  border:1.5px solid var(--borda);border-radius:var(--raio);font-size:16px;font-weight:500;
+  cursor:pointer;transition:all .15s;min-height:52px;line-height:1.35}
+
+.opcao:hover{border-color:var(--borda-forte);background:#FCFCFD}
+
+.opcao.sel{border-color:var(--primary);background:var(--primary-08);color:var(--primary);font-weight:600}
+
+/* Grade de opcoes curtas — menos rolagem, menos cliques (2 col; 3 col no desktop) */
+
+.grade{max-width:460px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+
+.grade .opcao{text-align:center;padding:15px 10px;font-size:15px}
+
+@media(min-width:560px){ .grade{grid-template-columns:repeat(3,1fr)} }
+
+/* --- Seletor de horarios --- */
+
+.sel-passo{max-width:520px;margin:0 auto}
+
+.rotulo-sec{font-size:12px;font-family:var(--font-util);color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px;text-align:center}
+
+.dias{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch}
+
+.dias::-webkit-scrollbar{height:4px}
+
+.dias::-webkit-scrollbar-thumb{background:var(--borda-forte);border-radius:99px}
+
+.dia{flex:none;scroll-snap-align:start;min-width:62px;padding:10px 6px;background:#fff;
+  border:1.5px solid var(--borda);border-radius:12px;cursor:pointer;text-align:center;transition:all .15s}
+
+.dia:hover{border-color:var(--borda-forte)}
+
+.dia.sel{border-color:var(--primary);background:var(--primary);color:#fff}
+
+.dia .ds{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;opacity:.75;font-weight:600}
+
+.dia .dn{display:block;font-size:20px;font-weight:700;line-height:1.25;font-family:var(--font-display)}
+
+.dia .dm{display:block;font-size:11px;opacity:.75}
+
+.horas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+
+@media(min-width:480px){ .horas{grid-template-columns:repeat(4,1fr)} }
+
+.hora{padding:12px 4px;background:#fff;border:1.5px solid var(--borda);border-radius:var(--raio);
+  font-size:15px;font-weight:600;color:var(--text-main);cursor:pointer;transition:all .15s;min-height:46px}
+
+.hora:hover{border-color:var(--borda-forte)}
+
+.hora.sel{border-color:var(--primary);background:var(--primary);color:#fff}
+
+.hora:disabled{opacity:.35;cursor:not-allowed}
+
+.escolhidos{display:flex;flex-direction:column;gap:8px;margin-top:22px}
+
+.escolhido{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--primary-08);
+  border:1.5px solid var(--primary-16);border-radius:var(--raio);font-size:15px;font-weight:500;color:var(--primary)}
+
+.escolhido .num{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;
+  display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+
+.escolhido .txt{flex:1}
+
+.escolhido button{background:none;border:none;color:var(--primary);font-size:20px;line-height:1;
+  cursor:pointer;padding:0 4px;opacity:.55}
+
+.escolhido button:hover{opacity:1}
+
+.vaga{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px dashed var(--borda);
+  border-radius:var(--raio);font-size:14.5px;color:var(--text-muted)}
+
+.vaga .num{width:22px;height:22px;border-radius:50%;background:var(--borda);color:var(--text-muted);
+  display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+
+/* Navegacao */
+
+.nav{display:flex;gap:10px;justify-content:center;margin-top:30px;max-width:460px;
+  margin-left:auto;margin-right:auto}
+
+.nav button{flex:1;font-size:16px}
+
+@media(max-width:400px){ .nav button{padding:12px 14px} }
+
 .fim{text-align:center;padding:40px 0}
-.fim h2{color:var(--gold);margin-bottom:12px}
-footer{margin-top:auto}
-</style></head>
+
+.fim .marca{width:64px;height:64px;border-radius:50%;background:#ECFDF5;color:var(--ok);
+  display:grid;place-items:center;font-size:30px;margin:0 auto 20px}
+
+.fim h2{color:var(--text-main);margin-bottom:12px;font-size:26px}
+
+.fim p{color:var(--text-muted);font-size:16px}
+
+.resumo{max-width:420px;margin:26px auto 0;text-align:left;background:#fff;border:1px solid var(--borda);
+  border-radius:var(--raio);padding:16px 18px}
+
+.resumo h5{font-size:12px;font-family:var(--font-util);color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+
+.resumo div{font-size:14.5px;padding:5px 0;color:var(--text-main)}
+
+.resumo div span{color:var(--text-muted)}
+footer{margin-top:auto;padding-top:36px}
+</style>
+</head>
 <body>
 <div class="envelope">
   <header>
     <h1 id="nomeAdv">Dra. Poliana Espolador</h1>
-    <p>Advocacia Previdenciária · Curitiba/PR</p>
+    <p>Advocacia Previdenciária</p>
   </header>
-
-  <!-- ACOLHIMENTO -->
   <section id="hero" class="hero">
     <h2>Você foi indicado — e isso, para mim, é o maior sinal de confiança.</h2>
-    <p>A Dra. Poliana terá grande alegria em atender você. Para que a primeira conversa já comece
-       com o seu caso compreendido, responda algumas perguntas rápidas. Leva menos de 3 minutos,
-       e nada aqui é compromisso.</p>
-    <button class="btn" style="width:100%" onclick="iniciar()">Começar</button>
-    <p class="dica" style="text-align:center;margin-top:12px">Sem cadastro, sem senha, sem custo.</p>
+    <p>Para que a nossa primeira conversa já comece com o seu caso compreendido,
+       responda algumas perguntas rápidas. Leva menos de 2 minutos, e nada aqui é compromisso.</p>
+    <button class="btn" style="width:100%;max-width:320px" id="btComecar">Começar</button>
+    <p class="dica">Sem cadastro, sem senha, sem custo.</p>
   </section>
-
-  <!-- FORMULÁRIO -->
   <section id="form" class="oculto">
     <div class="progresso"><div id="barra"></div></div>
-
     <div class="tela" data-t="0">
       <p class="pergunta">Como você prefere ser chamado(a)?</p>
-      <input id="f_nome" placeholder="Seu nome completo" autocomplete="name">
+      <p class="sub">Seu nome completo</p>
+      <div class="campo"><input type="text" id="f_nome" placeholder="Maria Aparecida da Silva" autocomplete="name" enterkeyhint="next"></div>
     </div>
-
     <div class="tela" data-t="1">
-      <p class="pergunta">Qual o melhor WhatsApp para falar com você?</p>
-      <input id="f_telefone" placeholder="(41) 9 9999-9999" inputmode="tel" autocomplete="tel">
-      <p class="dica">É por ele que a Dra. Poliana confirma a conversa.</p>
+      <p class="pergunta">Qual o melhor número para falar com você?</p>
+      <p class="sub">Com DDD</p>
+      <div class="campo"><input type="tel" id="f_telefone" placeholder="(41) 99999-9999" inputmode="numeric" autocomplete="tel" enterkeyhint="next"></div>
+      <p class="dica">Usado apenas pela Dra. Poliana para falar com você.</p>
     </div>
-
     <div class="tela" data-t="2">
       <p class="pergunta">E o seu e-mail?</p>
-      <input id="f_email" placeholder="voce@email.com" inputmode="email" autocomplete="email">
+      <p class="sub">Para você receber a confirmação do atendimento</p>
+      <div class="campo"><input type="email" id="f_email" placeholder="voce@email.com" inputmode="email" autocomplete="email" enterkeyhint="next"></div>
     </div>
-
     <div class="tela" data-t="3">
       <p class="pergunta">Em qual cidade você mora?</p>
-      <input id="f_cidade" placeholder="Curitiba, Colombo, Pinhais...">
+      <p class="sub">Toque na sua cidade ou escolha "Outra"</p>
+      <div class="grade" id="g_cidade"></div>
+      <div class="campo oculto" id="wrap_cidade_outra" style="margin-top:12px">
+        <input type="text" id="f_cidade_outra" placeholder="Digite a sua cidade">
+      </div>
     </div>
-
     <div class="tela" data-t="4">
       <p class="pergunta">Como você chegou até aqui?</p>
-      <div id="g_origem"></div>
-      <input id="f_quem_indicou" class="oculto" placeholder="Quem indicou? (se quiser contar, ela agradece 🙂)" style="margin-top:10px">
+      <div class="opcoes" id="g_origem"></div>
+      <div class="campo oculto" id="wrap_indicou" style="margin-top:12px">
+        <input type="text" id="f_quem_indicou" placeholder="Quem indicou? (ela agradece)">
+      </div>
     </div>
-
     <div class="tela" data-t="5">
-      <p class="pergunta">O assunto é sobre qual benefício?</p>
-      <div id="g_beneficio"></div>
+      <p class="pergunta">Qual é o seu vínculo?</p>
+      <p class="sub">Isso define quais perguntas farei a seguir</p>
+      <div class="opcoes" id="g_vinculo"></div>
     </div>
-
+    <!-- Rota INSS -->
     <div class="tela" data-t="6">
-      <p class="pergunta">Qual dessas frases descreve melhor a sua situação?</p>
-      <div id="g_situacao"></div>
+      <p class="pergunta">O assunto é sobre qual benefício?</p>
+      <div class="opcoes" id="g_beneficio"></div>
     </div>
-
     <div class="tela" data-t="7">
+      <p class="pergunta">Qual frase descreve melhor a sua situação?</p>
+      <div class="opcoes" id="g_situacao"></div>
+    </div>
+    <div class="tela" data-t="8">
       <p class="pergunta">Sobre os documentos do caso…</p>
-      <div id="g_docs"></div>
+      <div class="opcoes" id="g_docs"></div>
       <p class="dica">Não se preocupe se não tiver nada — faz parte, e existe caminho.</p>
     </div>
-
-    <div class="tela" data-t="8">
-      <p class="pergunta">E quanto à urgência?</p>
-      <div id="g_urgencia"></div>
-    </div>
-
     <div class="tela" data-t="9">
-      <p class="pergunta">Conte, com suas palavras, o que aconteceu.</p>
-      <textarea id="f_relato" rows="6" placeholder="Escreva como se estivesse conversando. Quanto mais detalhes, melhor a Dra. Poliana chega na conversa com você."></textarea>
+      <p class="pergunta">E quanto à urgência?</p>
+      <div class="opcoes" id="g_urgencia"></div>
     </div>
-
     <div class="tela" data-t="10">
-      <p class="pergunta">Para terminar: sugira 3 dias e horários que ficam bons para você.</p>
-      <p class="dica" style="margin-bottom:12px">A Dra. Poliana escolhe um deles e confirma no seu WhatsApp.</p>
-      <div class="janela-linha"><input type="date" id="d1"><input type="time" id="h1"></div>
-      <div class="janela-linha"><input type="date" id="d2"><input type="time" id="h2"></div>
-      <div class="janela-linha"><input type="date" id="d3"><input type="time" id="h3"></div>
-      <p class="dica" id="avisoConsent">Ao enviar, você concorda que estas informações sejam usadas
+      <p class="pergunta">Conte, com suas palavras, o que aconteceu.</p>
+      <p class="sub">Opcional, mas ajuda muito — escreva como se estivesse conversando</p>
+      <div class="campo"><textarea id="f_relato" placeholder="Ex.: Trabalhei 26 anos como soldador e pedi a aposentadoria sozinho pelo aplicativo, mas foi negada…"></textarea></div>
+    </div>
+    <!-- Rota Servidor Publico -->
+    <div class="tela" data-t="11">
+      <p class="pergunta">Você é servidor de qual esfera?</p>
+      <div class="grade" id="g_esfera"></div>
+      <div class="campo oculto" id="wrap_est_mun" style="margin-top:12px">
+        <input type="text" id="f_estado_municipio" placeholder="Qual Estado ou Município?">
+      </div>
+    </div>
+    <div class="tela" data-t="12">
+      <p class="pergunta">Qual é o seu objetivo?</p>
+      <div class="opcoes" id="g_objetivo_sp"></div>
+      <div class="campo oculto" id="wrap_relato_sp" style="margin-top:12px">
+        <input type="text" id="f_relato_sp" placeholder="Especifique em poucas palavras">
+      </div>
+    </div>
+    <!-- Horarios -->
+    <div class="tela" data-t="13">
+      <p class="pergunta">Quando fica bom para você?</p>
+      <p class="sub">Escolha até 3 opções. A Dra. Poliana confirma uma delas.</p>
+      <div class="sel-passo">
+        <p class="rotulo-sec">1. Escolha o dia</p>
+        <div class="dias" id="listaDias"></div>
+        <p class="rotulo-sec" style="margin-top:14px">2. Escolha o horário</p>
+        <div class="horas" id="listaHoras"></div>
+        <div class="escolhidos" id="escolhidos"></div>
+      </div>
+      <p class="dica" style="margin-top:20px">Ao enviar, você concorda que estas informações sejam usadas
         exclusivamente para a Dra. Poliana analisar seu caso e entrar em contato.</p>
     </div>
-
     <div class="nav">
-      <button class="btn-fantasma" id="btVoltar" onclick="mover(-1)">Voltar</button>
-      <button class="btn" id="btAvancar" onclick="mover(1)">Avançar</button>
+      <button class="btn-fantasma" id="btVoltar">Voltar</button>
+      <button class="btn" id="btAvancar">Avançar</button>
     </div>
   </section>
-
-  <!-- CONFIRMAÇÃO -->
   <section id="fim" class="fim oculto">
-    <h2>Recebido! ✓</h2>
-    <p>Suas informações já estão com a Dra. Poliana.<br>
-       Ela vai analisar o seu caso e confirmar o horário pelo seu WhatsApp.</p>
-    <p class="dica" style="margin-top:14px">Enquanto isso, se tiver documentos do INSS guardados,
-       vá separando — sem pressa e sem organizar nada.</p>
+    <div class="marca">&#10003;</div>
+    <h2>Recebido!</h2>
+    <p>Suas informações já estão com a Dra. Poliana.<br>Ela vai analisar o seu caso e entrar em contato.</p>
+    <div class="resumo" id="resumoFinal"></div>
+    <p class="dica" style="margin-top:18px">Se tiver documentos guardados, vá separando — sem pressa e sem organizar nada.</p>
+    <button class="btn-fantasma" id="btVoltarInicio" style="margin-top:24px">Voltar ao início</button>
+    <p class="dica" id="contadorVolta"></p>
   </section>
-
-  <footer><div class="lgpd">🔒 <span id="lgpdTxt">Seus dados permanecem na infraestrutura do escritório,
-    protegidos nos termos da LGPD, e não são enviados a sistemas de inteligência artificial.</span></div></footer>
+  <footer>
+    <div class="lgpd">
+      &#128274; <strong>Seus dados ficam protegidos na infraestrutura do escritório.</strong>
+      <span class="lgpd-artigos">
+        Adotamos as medidas de segurança do Art. 46 da LGPD (Lei nº 13.709/2018).<br>
+        Em respeito aos princípios da finalidade e da segurança (Art. 6º, I e VII),
+        suas informações não são enviadas a sistemas externos de inteligência artificial.
+      </span>
+    </div>
+  </footer>
 </div>
 
 <script>
-const OPCOES = {
+
+/* 'inss' | 'servidor' | '' — vem do link usado (ver doGet no Code.gs) */
+
+var TIPO_PRESET = '<?= tipoPreset ?>';
+
+var OPCOES = {
+  cidade:['Curitiba','São José dos Pinhais','Colombo','Pinhais','Araucária','Outra cidade'],
   origem:['Indicação de alguém','Instagram','Pesquisa no Google','Outro'],
-  beneficio:['Aposentadoria por idade urbana','Aposentadoria por tempo de contribuição (híbrida)',
-    'Aposentadoria especial','Auxílio por incapacidade temporária','BPC/LOAS - Pessoa com deficiência',
-    'Pensão por morte','Auxílio-acidente','Revisão de benefício','Não sei / Outro assunto'],
+  vinculo:['INSS (trabalhador da iniciativa privada, autônomo ou rural)','Servidor Público'],
+  beneficio:['Aposentadoria','Revisão de aposentadoria','Planejamento previdenciário',
+    'Benefício por incapacidade (Auxílio-doença / Aposentadoria por invalidez)',
+    'BPC/LOAS (Idoso e deficiente)','Pensão por morte','Outros'],
   situacao:['Nunca requeri','Requeri e foi negado','Recebo e quero revisar','Recebia e foi cessado'],
   docs:['Tenho tudo','Tenho parte','Não tenho nada'],
-  urgencia:['Estou sem renda','Preciso resolver em breve','Sem pressa']
+  urgencia:['Estou sem renda','Preciso resolver em breve','Sem pressa'],
+  esfera:['Federal','Estadual','Municipal'],
+  objetivo_sp:['Consultoria','Pedir um benefício','Outros']
 };
-const R = { origem:'', beneficio:'', situacao:'', tem_documentos:'', urgencia:'' };
-let tela = 0;
-const TOTAL = 11;
-const $ = id => document.getElementById(id);
 
-function grupo(el, lista, chave){
+var R = { cidade:'', origem:'', vinculo:'', beneficio:'', situacao:'', tem_documentos:'',
+          urgencia:'', esfera:'', objetivo_sp:'' };
+
+var janelas = [];          // ate 3 objetos {iso, rotulo}
+
+var telasAtivas = [0,1,2,3,4,5,13];
+
+var indiceT = 0;
+
+var _timerVolta = null;
+
+var $ = function(id){ return document.getElementById(id); };
+
+function atualizarFluxo(){
+  var semPergunta = !!TIPO_PRESET;               // link ja veio com o vinculo definido
+  var base = semPergunta ? [0,1,2,3,4] : [0,1,2,3,4,5];
+  if (/^INSS/.test(R.vinculo)) telasAtivas = base.concat([6,7,8,9,10,13]);
+  else if (/Servidor/.test(R.vinculo)) telasAtivas = base.concat([11,12,13]);
+  else telasAtivas = base.concat([13]);
+}
+
+/* Monta um grupo de botoes. avanca=true pula para a proxima tela ao escolher
+   (menos cliques: escolher ja e avancar). */
+
+function grupo(el, lista, chave, avanca){
+  if(!el) return;
   el.innerHTML = '';
-  lista.forEach(op => {
-    const b = document.createElement('button');
-    b.className = 'opcao'; b.textContent = op;
-    b.onclick = () => {
+  lista.forEach(function(op){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'opcao'; b.textContent = op;
+    b.onclick = function(){
       R[chave] = op;
-      [...el.children].forEach(x=>x.classList.remove('sel'));
+      var irmaos = el.children;
+      for (var i=0;i<irmaos.length;i++) irmaos[i].classList.remove('sel');
       b.classList.add('sel');
-      if (chave==='origem') $('f_quem_indicou').classList.toggle('oculto', !/Indicação/.test(op));
-      setTimeout(()=>mover(1), 220);   // fluidez: escolheu, avança
+      var extra = null;
+      if (chave === 'origem')     extra = mostrarExtra('wrap_indicou',  /Indicação/.test(op), 'f_quem_indicou');
+      if (chave === 'cidade')     extra = mostrarExtra('wrap_cidade_outra', /Outra/.test(op), 'f_cidade_outra');
+      if (chave === 'esfera')     extra = mostrarExtra('wrap_est_mun',  /Estadual|Municipal/.test(op), 'f_estado_municipio');
+      if (chave === 'objetivo_sp')extra = mostrarExtra('wrap_relato_sp',/Outros/.test(op), 'f_relato_sp');
+      if (chave === 'vinculo')    atualizarFluxo();
+      /* So avanca sozinho quando a escolha nao abriu um campo extra para preencher */
+      if (avanca && !extra) setTimeout(function(){ mover(1); }, 220);
     };
     el.appendChild(b);
   });
 }
-grupo($('g_origem'), OPCOES.origem, 'origem');
-grupo($('g_beneficio'), OPCOES.beneficio, 'beneficio');
-grupo($('g_situacao'), OPCOES.situacao, 'situacao');
-grupo($('g_docs'), OPCOES.docs, 'tem_documentos');
-grupo($('g_urgencia'), OPCOES.urgencia, 'urgencia');
+
+function mostrarExtra(idWrap, condicao, idInput){
+  var w = $(idWrap); if(!w) return false;
+  w.classList.toggle('oculto', !condicao);
+  if (condicao){ var i = $(idInput); if(i) setTimeout(function(){ i.focus(); }, 120); return true; }
+  return false;
+}
+
+/* ---------- Seletor de horarios ----------
+   Os dias e horas vem do Google Calendar da advogada (endpoint
+   horariosDisponiveis). O cliente so ve o que esta realmente livre. */
+
+var DISPO = null;          // { fonte, dias:[{iso,ds,dn,dm,horas:[]}] }
+
+var diaSel = null;         // objeto de DISPO.dias
+
+function carregarDisponibilidade(){
+  var box = $('listaDias'), bh = $('listaHoras');
+  if (!box) return;
+  box.innerHTML = '<p class="dica" style="margin:0;padding:12px 0">Consultando a agenda…</p>';
+  if (bh) bh.innerHTML = '';
+  google.script.run
+    .withSuccessHandler(function(r){
+      DISPO = r || { dias:[] };
+      montarDias();
+    })
+    .withFailureHandler(function(){
+      DISPO = { fonte:'erro', dias:[] };
+      box.innerHTML = '<p class="dica" style="margin:0;padding:12px 0">' +
+        'Não consegui consultar a agenda agora. Envie assim mesmo — ' +
+        'a Dra. Poliana entra em contato para combinar o horário.</p>';
+    })
+    .horariosDisponiveis();
+}
+
+function montarDias(){
+  var box = $('listaDias'); if(!box) return;
+  box.innerHTML = '';
+  if (!DISPO || !DISPO.dias.length){
+    box.innerHTML = '<p class="dica" style="margin:0;padding:12px 0">' +
+      'Não há horários livres nas próximas semanas. Envie assim mesmo — ' +
+      'a Dra. Poliana entra em contato para combinar com você.</p>';
+    montarHoras();
+    return;
+  }
+  DISPO.dias.forEach(function(dia){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'dia';
+    b.innerHTML = '<span class="ds">' + dia.ds + '</span>' +
+                  '<span class="dn">' + dia.dn + '</span>' +
+                  '<span class="dm">' + dia.dm + '</span>';
+    b.onclick = function(){
+      diaSel = dia;
+      var irmaos = box.children;
+      for (var i=0;i<irmaos.length;i++) irmaos[i].classList.remove('sel');
+      b.classList.add('sel');
+      montarHoras();
+    };
+    box.appendChild(b);
+  });
+  montarHoras();
+}
+
+function rotulo(dia, hora){
+  return dia.ds + ', ' + dia.dn + ' de ' + dia.dm + ' às ' + hora;
+}
+
+function montarHoras(){
+  var box = $('listaHoras'); if(!box) return;
+  box.innerHTML = '';
+  if (!diaSel){
+    box.innerHTML = '<p class="dica" style="grid-column:1/-1;margin:0">' +
+      ((DISPO && DISPO.dias.length) ? 'Escolha um dia acima.' : '') + '</p>';
+    return;
+  }
+  diaSel.horas.forEach(function(h){
+    var chave = diaSel.iso + ' ' + h;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'hora'; b.textContent = h;
+    if (janelas.some(function(j){ return j.iso === chave; })) b.classList.add('sel');
+    b.onclick = function(){
+      var idx = -1;
+      for (var i=0;i<janelas.length;i++) if (janelas[i].iso === chave) idx = i;
+      if (idx >= 0) janelas.splice(idx,1);
+      else if (janelas.length >= 3){
+        dialogo({ tipo:'info', titulo:'Já são 3 opções',
+          texto:'Para escolher outro horário, remova um dos que já estão na lista abaixo.' });
+        return;
+      } else janelas.push({ iso: chave, rotulo: rotulo(diaSel, h) });
+      montarHoras(); montarEscolhidos();
+    };
+    box.appendChild(b);
+  });
+}
+
+function montarEscolhidos(){
+  var box = $('escolhidos'); if(!box) return;
+  var h = '';
+  for (var i=0;i<3;i++){
+    if (janelas[i]){
+      h += '<div class="escolhido"><span class="num">' + (i+1) + '</span>' +
+           '<span class="txt">' + janelas[i].rotulo + '</span>' +
+           '<button type="button" onclick="removerJanela(' + i + ')" aria-label="Remover">&times;</button></div>';
+    } else {
+      h += '<div class="vaga"><span class="num">' + (i+1) + '</span><span>' +
+           (i === 0 ? 'Escolha ao menos um horário' : 'Opção adicional (não é obrigatório)') + '</span></div>';
+    }
+  }
+  box.innerHTML = h;
+}
+
+function removerJanela(i){ janelas.splice(i,1); montarHoras(); montarEscolhidos(); }
+
+/* ---------- Navegacao ---------- */
 
 function iniciar(){ $('hero').classList.add('oculto'); $('form').classList.remove('oculto'); pinta(); }
+
 function pinta(){
-  document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', Number(t.dataset.t)===tela));
-  $('barra').style.width = ((tela+1)/TOTAL*100)+'%';
-  $('btVoltar').style.visibility = tela===0 ? 'hidden':'visible';
-  $('btAvancar').textContent = tela===TOTAL-1 ? 'Enviar ✓' : 'Avançar';
-  window.scrollTo({top:0});
+  var atual = telasAtivas[indiceT];
+  var telas = document.querySelectorAll('.tela');
+  for (var i=0;i<telas.length;i++) telas[i].classList.toggle('on', Number(telas[i].dataset.t) === atual);
+  $('barra').style.width = (((indiceT+1)/telasAtivas.length)*100) + '%';
+  $('btVoltar').style.display = indiceT === 0 ? 'none' : 'inline-flex';
+  $('btAvancar').textContent = indiceT === telasAtivas.length - 1 ? 'Enviar' : 'Avançar';
+  if (atual === 13 && !DISPO){ carregarDisponibilidade(); montarEscolhidos(); }
+  window.scrollTo({ top:0, behavior:'smooth' });
+  var campo = document.querySelector('.tela.on input[type="text"], .tela.on input[type="tel"], .tela.on input[type="email"]');
+  if (campo && window.innerWidth > 720) setTimeout(function(){ campo.focus(); }, 180);
 }
+
+function precisa(v, titulo, texto){
+  if (String(v||'').trim()) return true;
+  dialogo({ tipo:'aviso', titulo: titulo, texto: texto });
+  return false;
+}
+
 function valida(){
-  const need = (v,msg)=>{ if(!String(v||'').trim()){ alert(msg); return false } return true };
-  switch(tela){
-    case 0: return need($('f_nome').value,'Me conta seu nome 🙂');
-    case 1: return need($('f_telefone').value,'Preciso do WhatsApp para a Dra. Poliana te responder.');
-    case 2: return need($('f_email').value,'Preciso de um e-mail válido.');
-    case 4: return need(R.origem,'Escolha uma opção.');
-    case 5: return need(R.beneficio,'Escolha uma opção — se não souber, marque a última.');
-    case 6: return need(R.situacao,'Escolha a frase mais próxima da sua situação.');
-    case 7: return need(R.tem_documentos,'Escolha uma opção.');
-    case 8: return need(R.urgencia,'Escolha uma opção.');
-    case 10: return need($('d1').value && $('h1').value,'Sugira ao menos o primeiro horário.');
+  var t = telasAtivas[indiceT];
+  if (t === 0) return precisa($('f_nome').value, 'Falta o seu nome', 'Como a Dra. Poliana deve chamar você?');
+  if (t === 1) return precisa($('f_telefone').value, 'Falta o telefone', 'É por ele que a Dra. Poliana entra em contato com você.');
+  if (t === 2){
+    var e = $('f_email').value.trim();
+    if (!precisa(e, 'Falta o e-mail', 'É para lá que enviamos a confirmação do seu atendimento.')) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)){
+      dialogo({ tipo:'aviso', titulo:'E-mail incompleto', texto:'Confira o endereço — parece faltar alguma coisa.' });
+      return false;
+    }
+    return true;
+  }
+  if (t === 3){
+    if (!precisa(R.cidade, 'Falta a cidade', 'Toque na sua cidade ou escolha "Outra cidade".')) return false;
+    if (/Outra/.test(R.cidade)) return precisa($('f_cidade_outra').value, 'Qual cidade?', 'Digite o nome da sua cidade.');
+    return true;
+  }
+  if (t === 4) return precisa(R.origem, 'Escolha uma opção', 'Assim a Dra. Poliana sabe como você chegou até ela.');
+  if (t === 5) return precisa(R.vinculo, 'Escolha uma opção', 'Isso define as próximas perguntas.');
+  if (t === 6) return precisa(R.beneficio, 'Escolha uma opção', 'Se não souber ao certo, marque "Outros".');
+  if (t === 7) return precisa(R.situacao, 'Escolha uma opção', 'Marque a frase mais próxima da sua situação.');
+  if (t === 8) return precisa(R.tem_documentos, 'Escolha uma opção', 'Tudo bem não ter nada ainda.');
+  if (t === 9) return precisa(R.urgencia, 'Escolha uma opção', 'Isso ajuda a Dra. Poliana a organizar os atendimentos.');
+  if (t === 11){
+    if (!precisa(R.esfera, 'Escolha uma opção', 'Federal, Estadual ou Municipal.')) return false;
+    if (/Estadual|Municipal/.test(R.esfera))
+      return precisa($('f_estado_municipio').value, 'Falta o Estado ou Município', 'Informe qual é.');
+    return true;
+  }
+  if (t === 12){
+    if (!precisa(R.objetivo_sp, 'Escolha uma opção', 'O que você procura?')) return false;
+    if (R.objetivo_sp === 'Outros') return precisa($('f_relato_sp').value, 'Especifique', 'Descreva em poucas palavras.');
+    return true;
+  }
+  if (t === 13){
+    /* Se a agenda não tem vaga (ou não pôde ser consultada), o formulário
+       não pode virar um beco sem saída: deixa seguir e o escritório combina. */
+    if (!janelas.length && DISPO && DISPO.dias.length){
+      dialogo({ tipo:'aviso', titulo:'Escolha um horário',
+        texto:'Toque em um dia e depois em um horário. Você pode sugerir até 3 opções.' });
+      return false;
+    }
+    return true;
   }
   return true;
 }
+
 function mover(dir){
-  if (dir>0 && !valida()) return;
-  if (tela===TOTAL-1 && dir>0) return enviar();
-  tela = Math.max(0, Math.min(TOTAL-1, tela+dir));
+  if (dir > 0 && !valida()) return;
+  if (dir > 0 && indiceT === telasAtivas.length - 1) return enviar();
+  indiceT = Math.max(0, Math.min(telasAtivas.length - 1, indiceT + dir));
   pinta();
 }
-function jan(d,h){ return ($(d).value && $(h).value) ? $(d).value+' '+$(h).value : ''; }
+
+function cidadeFinal(){
+  return /Outra/.test(R.cidade) ? ($('f_cidade_outra').value || '').trim() : R.cidade;
+}
+
 function enviar(){
-  $('btAvancar').disabled = true; $('btAvancar').textContent = 'Enviando…';
-  const payload = {
-    nome:$('f_nome').value, telefone:$('f_telefone').value, email:$('f_email').value,
-    cidade:$('f_cidade').value, origem:R.origem, quem_indicou:$('f_quem_indicou').value,
-    beneficio:R.beneficio, situacao:R.situacao, tem_documentos:R.tem_documentos,
-    urgencia:R.urgencia, relato:$('f_relato').value,
-    janela_1:jan('d1','h1'), janela_2:jan('d2','h2'), janela_3:jan('d3','h3')
+  mostrarCarregando('Enviando suas informações…');
+  $('btAvancar').disabled = true;
+  var payload = {
+    nome: $('f_nome').value, telefone: $('f_telefone').value, email: $('f_email').value,
+    cidade: cidadeFinal(), origem: R.origem, quem_indicou: $('f_quem_indicou').value,
+    vinculo: (/Servidor/.test(R.vinculo) ? 'Servidor Público' : 'INSS'),
+    beneficio: R.beneficio, situacao: R.situacao,
+    tem_documentos: R.tem_documentos, urgencia: R.urgencia, relato: $('f_relato').value,
+    esfera: R.esfera, estado_municipio: $('f_estado_municipio').value,
+    objetivo_sp: R.objetivo_sp, relato_sp: $('f_relato_sp').value,
+    janela_1: janelas[0] ? janelas[0].iso : '',
+    janela_2: janelas[1] ? janelas[1].iso : '',
+    janela_3: janelas[2] ? janelas[2].iso : ''
   };
+  /* Rede de seguranca: se o servidor nao responder, o usuario nunca fica preso
+     numa tela de carregamento sem saida. */
+  var respondeu = false;
+  var prazo = setTimeout(function(){
+    if (respondeu) return;
+    esconderCarregando(); $('btAvancar').disabled = false;
+    dialogo({ tipo:'erro', titulo:'A conexão está demorando',
+      texto:'Suas respostas continuam aqui. Toque em Enviar novamente em alguns instantes.' });
+  }, 25000);
   google.script.run
-    .withSuccessHandler(r => {
-      if (r && r.ok){ $('form').classList.add('oculto'); $('fim').classList.remove('oculto'); }
-      else { alert('Algo deu errado. Tente de novo em instantes.'); $('btAvancar').disabled=false; pinta(); }
+    .withSuccessHandler(function(r){
+      respondeu = true; clearTimeout(prazo); esconderCarregando(); $('btAvancar').disabled = false;
+      if (r && r.ok){ concluir(); }
+      else {
+        dialogo({ tipo:'erro', titulo:'Não consegui enviar',
+          texto:'Ocorreu um erro ao registrar seus dados. Tente novamente — se persistir, avise a Dra. Poliana.' +
+                (r && r.erro ? '<br><br><span style="font-size:12px;opacity:.7">' + r.erro + '</span>' : '') });
+      }
     })
-    .withFailureHandler(() => { alert('Sem conexão com o servidor. Tente de novo.'); $('btAvancar').disabled=false; pinta(); })
+    .withFailureHandler(function(err){
+      respondeu = true; clearTimeout(prazo); esconderCarregando(); $('btAvancar').disabled = false;
+      dialogo({ tipo:'erro', titulo:'Sem conexão com o servidor',
+        texto:'Verifique sua internet e tente novamente.' +
+              (err && err.message ? '<br><br><span style="font-size:12px;opacity:.7">' + err.message + '</span>' : '') });
+    })
     .submitLead(payload);
 }
+
+function concluir(){
+  var r = '<h5>Resumo do seu pedido</h5>';
+  r += '<div><span>Nome:</span> ' + $('f_nome').value + '</div>';
+  if (R.vinculo) r += '<div><span>Vínculo:</span> ' + (/Servidor/.test(R.vinculo) ? 'Servidor Público' : 'INSS') + '</div>';
+  if (R.beneficio)   r += '<div><span>Assunto:</span> ' + R.beneficio + '</div>';
+  if (R.objetivo_sp) r += '<div><span>Objetivo:</span> ' + R.objetivo_sp + '</div>';
+  if (janelas.length){
+    r += '<div><span>Horários sugeridos:</span></div>';
+    janelas.forEach(function(j){ r += '<div>&bull; ' + j.rotulo + '</div>'; });
+  }
+  $('resumoFinal').innerHTML = r;
+  $('form').classList.add('oculto');
+  $('fim').classList.remove('oculto');
+  window.scrollTo({ top:0, behavior:'smooth' });
+  iniciarContadorVolta();
+}
+
+function iniciarContadorVolta(){
+  var s = 30, alvo = $('contadorVolta');
+  alvo.textContent = 'Voltando ao início em ' + s + 's';
+  _timerVolta = setInterval(function(){
+    s--;
+    if (s <= 0) return voltarInicio();
+    alvo.textContent = 'Voltando ao início em ' + s + 's';
+  }, 1000);
+}
+
+function voltarInicio(){
+  clearInterval(_timerVolta);
+  ['f_nome','f_telefone','f_email','f_cidade_outra','f_quem_indicou','f_relato',
+   'f_estado_municipio','f_relato_sp'].forEach(function(id){ var e=$(id); if(e) e.value=''; });
+  Object.keys(R).forEach(function(k){ R[k]=''; });
+  janelas = []; diaSel = null;
+  var sels = document.querySelectorAll('.opcao.sel, .dia.sel, .hora.sel');
+  for (var i=0;i<sels.length;i++) sels[i].classList.remove('sel');
+  ['wrap_indicou','wrap_cidade_outra','wrap_est_mun','wrap_relato_sp']
+    .forEach(function(id){ var e=$(id); if(e) e.classList.add('oculto'); });
+  $('listaDias').innerHTML = ''; DISPO = null;
+  indiceT = 0;
+  if (TIPO_PRESET === 'inss') R.vinculo = 'INSS';
+  else if (TIPO_PRESET === 'servidor') R.vinculo = 'Servidor Público';
+  atualizarFluxo();
+  $('btAvancar').disabled = false;
+  $('fim').classList.add('oculto'); $('form').classList.add('oculto'); $('hero').classList.remove('oculto');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function init(){
+  if (TIPO_PRESET === 'inss') R.vinculo = 'INSS';
+  else if (TIPO_PRESET === 'servidor') R.vinculo = 'Servidor Público';
+  atualizarFluxo();
+  grupo($('g_cidade'),      OPCOES.cidade,      'cidade',      true);
+  grupo($('g_origem'),      OPCOES.origem,      'origem',      true);
+  grupo($('g_vinculo'),     OPCOES.vinculo,     'vinculo',     true);
+  grupo($('g_beneficio'),   OPCOES.beneficio,   'beneficio',   true);
+  grupo($('g_situacao'),    OPCOES.situacao,    'situacao',    true);
+  grupo($('g_docs'),        OPCOES.docs,        'tem_documentos', true);
+  grupo($('g_urgencia'),    OPCOES.urgencia,    'urgencia',    true);
+  grupo($('g_esfera'),      OPCOES.esfera,      'esfera',      true);
+  grupo($('g_objetivo_sp'), OPCOES.objetivo_sp, 'objetivo_sp', true);
+  $('btComecar').addEventListener('click', iniciar);
+  $('btVoltar').addEventListener('click', function(){ mover(-1); });
+  $('btAvancar').addEventListener('click', function(){ mover(1); });
+  $('btVoltarInicio').addEventListener('click', voltarInicio);
+  /* Enter avanca nos campos de texto — menos toques no celular */
+  ['f_nome','f_telefone','f_email','f_cidade_outra','f_quem_indicou','f_estado_municipio','f_relato_sp']
+    .forEach(function(id){
+      var e = $(id); if(!e) return;
+      e.addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); mover(1); } });
+    });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
 </script>
-</body></html>
+</body>
+</html>

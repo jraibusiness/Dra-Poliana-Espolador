@@ -62,7 +62,6 @@ h2.sec{font-size:17px;margin-bottom:12px;color:var(--text-main)}
 
 .vazio{color:var(--text-muted);text-align:center;padding:34px 16px;font-size:15px}
 
-.alertaHoje{border-left:4px solid var(--erro)}
 
 .relato{background:var(--bg-app);border-radius:var(--raio);padding:13px 14px;margin-top:11px;
   color:var(--text-muted);font-size:14.5px;line-height:1.6;border:1px solid var(--borda)}
@@ -158,6 +157,45 @@ const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','
 
 const cls = f => ({'Prioritário':'b-prior','Qualificado':'b-qual','Em avaliação':'b-aval'}[f]||'b-info');
 
+/* =================================================================
+   O QUE CADA FASE SIGNIFICA, EM ESTADO
+   Traduz o vocabulário do Astrea em três situações: em dia, precisa
+   de você, prazo correndo. É desta tabela que sai toda a cor do
+   painel — mudar aqui muda o painel inteiro, de forma coerente.
+   ================================================================= */
+const ESTADO_DA_FASE = {
+  'Consulta agendada'                : 'neutro',
+  'Coleta de documentos'             : 'atencao',   // depende do cliente responder
+  'Protocolado - aguardando análise' : 'neutro',    // está com o INSS, nada a fazer
+  'Aguardando perícia médica'        : 'atencao',   // tem data, exige preparo
+  'Exigência de documentação'        : 'urgente',   // o INSS deu prazo
+  'Em análise de cálculo'            : 'neutro',
+  'Deferido - implantação'           : 'ok',
+  'Indeferido - avaliando recurso'   : 'urgente',   // prazo de recurso correndo
+  'Judicial - ajuizado'              : 'neutro',
+  'Encerrado'                        : 'ok'
+};
+const estadoFase = f => ESTADO_DA_FASE[f] || 'neutro';
+
+/* Ícone de cada estado. Acompanha sempre a cor: quem não distingue
+   as cores lê o símbolo, e quem imprime em preto e branco também. */
+const ICONE = { ok:'&#10003;', atencao:'&#9679;', urgente:'&#9888;', neutro:'&#8226;' };
+const PALAVRA = { ok:'Em dia', atencao:'Atenção', urgente:'Urgente', neutro:'Em curso' };
+
+function selo(estado, texto){
+  return '<span class="selo s-' + estado + '"><span class="ic" aria-hidden="true">' +
+         ICONE[estado] + '</span>' + esc(texto || PALAVRA[estado]) + '</span>';
+}
+
+/* Estado de um caso: a fase manda, mas um prazo vencido manda mais. */
+function estadoDoCaso(cs){
+  if (cs.data_proxima_acao && cs.fase !== 'Encerrado'){
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    if (new Date(cs.data_proxima_acao) < hoje) return 'urgente';
+  }
+  return estadoFase(cs.fase);
+}
+
 const fmtD = v => { if(!v) return ''; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleDateString('pt-BR'); };
 
 const fmtDH = v => { if(!v) return ''; const d=new Date(v); return isNaN(d)?esc(v):d.toLocaleDateString('pt-BR')+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); };
@@ -213,6 +251,77 @@ function pinta(){
   if (abaAtiva==='docs')  c.innerHTML = vDocs();
 }
 
+/** Quadro de resumo. Rola a página até a seção correspondente:
+ *  o número não é enfeite, é um atalho.
+ *  zeroBom: zero prazos vencidos é boa notícia; zero compromissos na
+ *  semana não é — e não pode ser anunciado como se fosse. */
+function quadro(n, rotulo, estado, alvo, zeroBom){
+  let marca;
+  if (n === 0 && zeroBom) marca = '<span class="marca">' + ICONE.ok + ' nada pendente</span>';
+  else if (n === 0)       marca = '<span class="marca">' + ICONE.neutro + ' nada por ora</span>';
+  else                    marca = '<span class="marca">' + ICONE[estado] + ' ' + PALAVRA[estado] + '</span>';
+  const zero = n === 0 ? ' data-zero="' + (zeroBom ? 'sim' : 'neutro') + '"' : '';
+  return '<button type="button" class="quadro" data-estado="' + estado + '"' + zero +
+         ' onclick="irPara(\'' + alvo + '\')">' +
+         '<span class="n">' + n + '</span>' +
+         '<span class="rot">' + esc(rotulo) + '</span>' + marca + '</button>';
+}
+
+function irPara(id){
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+/** Casos por fase. Barras horizontais rotuladas, coloridas pelo estado
+ *  que a fase significa. Sem biblioteca: é grid e div. */
+function graficoFases(){
+  const vivos = DB.casos.filter(cs => cs.fase !== 'Encerrado');
+  if (!vivos.length) return '';
+
+  const conta = {};
+  vivos.forEach(cs => { conta[cs.fase] = (conta[cs.fase] || 0) + 1; });
+
+  /* A ordem é a das FASES na Config: o gráfico vira a linha do tempo
+     do processo, e não um ranking que muda de forma toda semana. */
+  const ordem = (DB.config.fases || []).filter(f => conta[f]);
+  Object.keys(conta).forEach(f => { if (ordem.indexOf(f) < 0) ordem.push(f); });
+
+  const maior = Math.max.apply(null, ordem.map(f => conta[f]));
+
+  /* Um quadradinho por caso enquanto o volume é pequeno.
+     Barra proporcional mentiria: com cinco fases de um caso cada,
+     as cinco barras encostariam no fim da régua e o gráfico diria
+     "tudo cheio" quando são cinco casos. Contar é exato; a partir de
+     uma dúzia numa mesma fase, aí sim a barra passa a ser mais legível. */
+  const porUnidade = maior <= 12;
+
+  const linhas = ordem.map(f => {
+    const n = conta[f], e = estadoFase(f);
+    const descricao = esc(f + ': ' + n + ' caso' + (n > 1 ? 's' : '') + ', ' + PALAVRA[e]);
+    const medida = porUnidade
+      ? '<div class="gr-unidades" role="img" aria-label="' + descricao + '">' +
+        new Array(n + 1).join('<i data-estado="' + e + '"></i>') + '</div>'
+      : '<div class="gr-trilho"><div class="gr-barra" data-estado="' + e + '" ' +
+        'style="width:' + Math.round((n / maior) * 100) + '%" role="img" aria-label="' +
+        descricao + '"></div></div>';
+    /* A ordem aqui É a ordem das colunas do grid: rótulo, medida, contagem. */
+    return '<div class="gr-linha">' +
+      '<span class="gr-rot">' + esc(f) + '</span>' + medida +
+      '<span class="gr-val">' + n + '</span>' +
+    '</div>';
+  }).join('');
+
+  const legenda = ['ok','atencao','urgente','neutro'].map(e =>
+    '<span><i style="background:var(--st-' + e + ')"></i>' + PALAVRA[e] + '</span>').join('');
+
+  return '<section id="secFases" style="margin-bottom:26px">' +
+    '<h2 class="sec">Seus casos, por fase</h2>' +
+    '<p class="meta" style="margin:-6px 0 14px">' + vivos.length + ' caso' +
+      (vivos.length > 1 ? 's' : '') + ' em andamento. A cor diz o que cada fase exige de você.</p>' +
+    '<div class="card"><div class="gr">' + linhas + '</div>' +
+    '<div class="gr-legenda">' + legenda + '</div></div></section>';
+}
+
 function vHoje(){
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const em7 = new Date(hoje); em7.setDate(em7.getDate()+7);
@@ -221,22 +330,44 @@ function vHoje(){
   const novos = DB.leads.filter(l=>l.status_lead==='Novo').sort((a,b)=>b.score-a.score);
   const agHoje = DB.agenda.filter(a=>a.data_confirmada &&
     new Date(a.data_confirmada).toDateString()===new Date().toDateString());
-  let h = '<section id="secAgendaHoje"><h2 class="sec">Agenda de hoje</h2>';
-  h += agHoje.length ? agHoje.map(a=>`<div class="card item"><div class="linha1">
+  const vencidas = acoes.filter(cs => new Date(cs.data_proxima_acao) < hoje);
+  const docsPend = DB.docs.filter(d => /Pendente|Solicitado/.test(d.status));
+
+  /* Quatro números abrem a tela. É o "como estou hoje" antes de
+     qualquer rolagem — e cada um leva à lista que o explica. */
+  let h = '<div class="resumo-grade" id="secResumo">' +
+    quadro(vencidas.length, vencidas.length === 1 ? 'prazo vencido' : 'prazos vencidos',
+           'urgente', 'secAcoes', true) +
+    quadro(acoes.length - vencidas.length, 'nos próximos 7 dias',
+           'atencao', 'secAcoes', false) +   // zero aqui é agenda vazia, não vitória
+    quadro(novos.length, novos.length === 1 ? 'contato sem resposta' : 'contatos sem resposta',
+           'atencao', 'secNovos', true) +
+    quadro(docsPend.length, 'documentos em aberto', 'neutro', 'secFases', true) +
+  '</div>';
+
+  h += graficoFases();
+
+  h += '<section id="secAgendaHoje"><h2 class="sec">Agenda de hoje</h2>';
+  h += agHoje.length ? agHoje.map(a=>`<div class="card item" data-estado="neutro"><div class="linha1">
       <span class="nome">${esc(nomeDe(a))}</span>
       <span class="score">${fmtDH(a.data_confirmada)}</span></div>
       <div class="meta">${esc(a.tipo)}${a.modalidade?' · '+esc(a.modalidade):''}</div></div>`).join('')
     : '<p class="vazio">Nada agendado para hoje.</p>';
+
   h += '</section><section id="secAcoes" style="margin-top:26px"><h2 class="sec">Próximas ações (7 dias)</h2>';
   h += acoes.length ? acoes.map(cs => {
       const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
       const atrasada = new Date(cs.data_proxima_acao) < hoje;
-      return `<div class="card item ${atrasada?'alertaHoje':''}">
+      const e = atrasada ? 'urgente' : estadoFase(cs.fase);
+      const quando = atrasada ? 'venceu em ' + fmtD(cs.data_proxima_acao) : fmtD(cs.data_proxima_acao);
+      return `<div class="card item" data-estado="${e}">
         <div class="linha1"><span class="nome">${esc(cli.nome_completo)}</span>
-        <span class="score" style="color:${atrasada?'var(--erro)':'var(--text-muted)'};font-weight:${atrasada?'700':'400'}">${fmtD(cs.data_proxima_acao)}</span></div>
-        <div class="meta">${esc(cs.proxima_acao)} — ${esc(cs.fase)}</div>
+        ${selo(e, atrasada ? 'Prazo vencido' : null)}</div>
+        <div class="meta"><strong style="color:var(--st-${e})">${esc(quando)}</strong> · ${esc(cs.proxima_acao)}</div>
+        <div class="meta">${esc(cs.fase)}</div>
         <div class="acoes"><button class="btn-fantasma" onclick="abrirCaso('${cs.id_caso}')">Abrir caso</button></div></div>`;
     }).join('') : '<p class="vazio">Nenhuma ação pendente nos próximos 7 dias.</p>';
+
   h += '</section><section id="secNovos" style="margin-top:26px"><h2 class="sec">Contatos aguardando resposta</h2>';
   h += novos.length ? novos.map(cardLead).join('') : '<p class="vazio">Caixa de entrada limpa.</p>';
   return h+'</section>';
@@ -263,13 +394,28 @@ function vLeads(){
       : '<p class="vazio">Nenhum contato nessa combinação de filtros.</p>');
 }
 
+/** Estado de um contato: o que ele exige de você agora.
+ *  Independente da faixa de prioridade — são duas perguntas diferentes.
+ *  "Quem é mais importante" é a faixa; "o que está travado" é o estado. */
+function estadoDoLead(l){
+  if (l.status_lead === 'Convertido') return 'ok';
+  if (l.status_lead === 'Não convertido') return 'neutro';
+  if (l.janela_escolhida) return 'neutro';                  // agendado, seguindo
+  if (/Prioritário|Qualificado/.test(l.faixa)) return 'urgente';  // esperando e é caso quente
+  return 'atencao';
+}
+
 function cardLead(l){
   const janelas = [l.janela_1,l.janela_2,l.janela_3].filter(Boolean);
   const aguardando = !l.janela_escolhida && janelas.length && /Novo|Contatado/.test(l.status_lead);
-  return `<div class="card item" data-lead="${l.id_lead}">
+  const e = estadoDoLead(l);
+  const rotuloEstado = { ok:'Convertido', neutro:l.status_lead || 'Em curso',
+                         atencao:'Aguardando você', urgente:'Responder primeiro' }[e];
+  return `<div class="card item" data-lead="${l.id_lead}" data-estado="${e}">
     <div class="linha1"><span class="nome">${esc(l.nome)}</span>
       <span class="badge ${cls(l.faixa)}">${esc(l.faixa)}</span></div>
-    <div class="meta">${esc(l.beneficio_pretendido)}${l.cidade?' · '+esc(l.cidade):''} · ${esc(l.status_lead)}
+    <div class="linha1" style="margin-top:8px">${selo(e, rotuloEstado)}</div>
+    <div class="meta">${esc(l.beneficio_pretendido)}${l.cidade?' · '+esc(l.cidade):''}
       ${l.quem_indicou?` · indicação de ${esc(l.quem_indicou)}`:''}</div>
     ${l.relato?`<div class="relato">${esc(String(l.relato).slice(0,220))}${String(l.relato).length>220?'…':''}</div>`:''}
     ${aguardando?`<div class="meta" style="margin-top:14px;font-weight:600;color:var(--text-main)">Horários sugeridos — toque para confirmar:</div>
@@ -290,12 +436,20 @@ function vCasos(){
     (lista.length ? lista.map(cs => {
       const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
       const pend = DB.docs.filter(d=>d.id_caso===cs.id_caso && /Pendente|Solicitado/.test(d.status)).length;
-      return `<div class="card item" data-caso="${cs.id_caso}">
+      /* Dois fatos distintos, dois selos. A fase é onde o processo está;
+         o prazo vencido é uma tarefa atrasada dela. Um caso deferido com
+         uma conferência em atraso não é um caso "deferido em vermelho". */
+      const eFase = estadoFase(cs.fase);
+      const eCaso = estadoDoCaso(cs);
+      const vencido = eCaso === 'urgente' && eFase !== 'urgente';
+      return `<div class="card item" data-caso="${cs.id_caso}" data-estado="${eCaso}">
         <div class="linha1"><span class="nome">${esc(cli.nome_completo)}</span>
-          <span class="badge b-aval">${esc(cs.fase)}</span></div>
+          ${selo(eFase, cs.fase)}</div>
         <div class="meta">${esc(cs.tipo_beneficio)} · via ${esc(cs.via)}
-          ${cs.numero_requerimento_nb?` · NB ${esc(cs.numero_requerimento_nb)}`:''}
-          ${pend?` · <strong style="color:var(--alerta)">${pend} documento(s) pendente(s)</strong>`:''}</div>
+          ${cs.numero_requerimento_nb?` · NB ${esc(cs.numero_requerimento_nb)}`:''}</div>
+        ${(vencido||pend)?`<div class="linha1" style="margin-top:10px">
+          ${vencido?selo('urgente','Prazo vencido em '+fmtD(cs.data_proxima_acao)):''}
+          ${pend?selo('atencao', pend+' documento'+(pend>1?'s':'')+' em aberto'):''}</div>`:''}
         <div class="acoes">
           <button class="btn-fantasma" onclick="abrirCaso('${cs.id_caso}')">Detalhes</button>
           <button class="btn-fantasma" onclick="Msg.abrir({id_cliente:'${cs.id_cliente}',id_caso:'${cs.id_caso}'})">Responder status</button>
@@ -313,9 +467,12 @@ function vDocs(){
     (pend.length ? pend.map(d => {
       const cs = DB.casos.find(x=>x.id_caso===d.id_caso)||{};
       const cli = DB.clientes.find(x=>x.id_cliente===cs.id_cliente)||{};
-      return `<div class="card item"><div class="linha1">
+      /* Documento obrigatório que ainda nem foi pedido é o que trava
+         o protocolo — por isso sobe para urgente. */
+      const e = (d.status === 'Pendente' && String(d.obrigatorio) === 'Sim') ? 'urgente' : 'atencao';
+      return `<div class="card item" data-estado="${e}"><div class="linha1">
         <span class="nome" style="font-size:16px">${esc(d.nome_documento)}</span>
-        <span class="badge ${d.status==='Pendente'?'b-prior':'b-aval'}">${esc(d.status)}</span></div>
+        ${selo(e, d.status + (String(d.obrigatorio)==='Sim' ? ' · obrigatório' : ' · opcional'))}</div>
       <div class="meta">${esc(cli.nome_completo)}${cs.tipo_beneficio?' · '+esc(cs.tipo_beneficio):''}</div>
       <div class="acoes">
         <button class="btn-fantasma" onclick="docStatus('${d.id_doc}','Recebido','${esc(d.nome_documento)}','${esc(cli.nome_completo||'')}')">Marcar recebido</button>

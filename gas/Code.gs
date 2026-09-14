@@ -19,9 +19,11 @@ function doGet(e){
       'Este painel é de uso exclusivo do escritório. Se você é a Dra. Poliana, use o seu link pessoal.');
     return render_('Painel', 'Painel · ' + cfg('ESCRITORIO_ADVOGADA'));
   }
-  /* Confirmação de horário direto pelo e-mail que ela recebe. */
+  /* Confirmação de horário direto pelo e-mail que ela recebe.
+     Usa assinatura por lead, e não o token do painel: um e-mail
+     encaminhado não pode virar uma chave do painel inteiro. */
   if (page === 'confirmar'){
-    if (!acessoPainelOk_(e)) return htmlSimples_('Link inválido',
+    if (!assinaturaOk_(p.lead, p.j, p.s)) return htmlSimples_('Link inválido',
       'Este link de confirmação não é válido ou expirou.');
     try{
       const r = confirmarPeloEmail_(p.lead, Number(p.j || 1));
@@ -65,6 +67,28 @@ function acessoPainelOk_(e){
   return t && e && e.parameter.k === t;
 }
 
+/** Assinatura curta de um par (lead, janela), derivada do PAINEL_TOKEN.
+ *  O token nunca viaja: o link do e-mail leva só a assinatura, que serve
+ *  para aquele lead e aquela janela e não abre mais nada. */
+function assinarConfirmacao_(idLead, n){
+  const chave = cfg('PAINEL_TOKEN');
+  if (!chave) return '';
+  const bytes = Utilities.computeHmacSha256Signature(
+    'confirmar|' + idLead + '|' + n, chave);
+  return bytes.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('').slice(0, 24);
+}
+
+function assinaturaOk_(idLead, n, assinatura){
+  if (!idLead || !assinatura) return false;
+  const esperada = assinarConfirmacao_(idLead, Number(n || 1));
+  if (!esperada || esperada.length !== String(assinatura).length) return false;
+  /* Comparação de tempo constante: não vaza o prefixo correto. */
+  let dif = 0;
+  for (let i = 0; i < esperada.length; i++)
+    dif |= esperada.charCodeAt(i) ^ String(assinatura).charCodeAt(i);
+  return dif === 0;
+}
+
 /** URL base do app publicado — usada nos links dos e-mails. */
 
 function urlApp_(){
@@ -78,13 +102,28 @@ function emailEscritorio_(){
 }
 
 /** Cópia oculta de acompanhamento (Config: EMAIL_COPIA). Serve ao período de
- *  testes: ela usa a plataforma normalmente e o implantador vê o que sai. */
+ *  acompanhamento: ela usa a plataforma como dona e o implantador vê o que sai.
+ *  MODO_TESTE_EMAIL é aceito como sinônimo — é a chave que já existe na
+ *  planilha, e não faria sentido exigir que ela criasse outra. */
 
 function opcoesEnvio_(nome){
   const o = { name: nome || cfg('ESCRITORIO_ADVOGADA') || 'Escritório' };
-  const copia = cfg('EMAIL_COPIA');
+  const copia = cfg('EMAIL_COPIA') ||
+                (cfg('MODO_TESTE') === 'SIM' ? cfg('MODO_TESTE_EMAIL') : '');
   if (copia) o.bcc = copia;
   return o;
+}
+
+/** A conta Gmail gratuita envia 100 mensagens por dia. Um agendamento
+ *  gasta três. Sem esta verificação, o dia acaba e as falhas passam
+ *  despercebidas porque os envios são todos dentro de try/catch. */
+function cotaDeEmailOk_(necessarias){
+  try {
+    const resta = MailApp.getRemainingDailyQuota();
+    if (resta >= (necessarias || 1)) return true;
+    console.error('Cota de e-mail esgotada: restam ' + resta);
+    return false;
+  } catch(e){ return true; }   // na dúvida, tenta enviar
 }
 
 /** "2026-08-19 10:00" -> "quarta-feira, 19 de agosto às 10h" */
@@ -193,17 +232,68 @@ function termometro_(faixa, score){
 
 function sheet_(nome){ return SpreadsheetApp.getActive().getSheetByName(nome); }
 
+/** Colunas que guardam uma janela de atendimento ("2026-09-01 09:30").
+ *  A planilha converte esse texto em Date na gravação; o resto do
+ *  sistema espera texto. Normalizar na leitura resolve nos dois sentidos. */
+const COLS_JANELA = ['janela_1','janela_2','janela_3','janela_escolhida','data_confirmada'];
+
+/** Qualquer coisa que represente um instante -> "AAAA-MM-DD HH:mm".
+ *  Aceita Date (vindo da planilha), o formato canônico e as variantes
+ *  que a planilha já gravou no passado (ISO com Z, dd/mm/aaaa, m/d/aaaa). */
+function normJanela_(v){
+  if (v === null || v === undefined || v === '') return '';
+  const p2 = n => ('0' + n).slice(-2);
+  const deData = d => d.getFullYear() + '-' + p2(d.getMonth()+1) + '-' + p2(d.getDate()) +
+                      ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+
+  if (Object.prototype.toString.call(v) === '[object Date]')
+    return isNaN(v.getTime()) ? '' : deData(v);
+
+  const s = String(v).trim();
+  if (!s) return '';
+
+  /* Já canônico (ou ISO sem fuso): devolve como está, sem passar por Date. */
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+  if (m && !/[Zz]|[+-]\d{2}:\d{2}$/.test(s)) return m[1]+'-'+m[2]+'-'+m[3]+' '+m[4]+':'+m[5];
+
+  /* ISO com fuso: converte para o fuso local do script. */
+  if (/^\d{4}-\d{2}-\d{2}T/.test(s)){
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? '' : deData(d);
+  }
+
+  /* dd/mm/aaaa [hh:mm] — o formato que a planilha usa em pt-BR. */
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}):(\d{2}))?/);
+  if (m){
+    let dia = Number(m[1]), mes = Number(m[2]);
+    /* "8/19/2026" só pode ser m/d: mês acima de 12 denuncia a ordem. */
+    if (dia > 12 && mes <= 12){ /* dd/mm, ordem correta */ }
+    else if (mes > 12){ const t = dia; dia = mes; mes = t; }
+    return m[3]+'-'+p2(mes)+'-'+p2(dia)+' '+p2(Number(m[4]||0))+':'+p2(Number(m[5]||0));
+  }
+
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? s : deData(d);
+}
+
 function lerAba(nome){
   const v = sheet_(nome).getDataRange().getValues();
   const h = v.shift();
+  const janelas = h.map(c => COLS_JANELA.indexOf(c) >= 0);
   return v.filter(r => String(r[0]).trim() !== '')
-          .map(r => Object.fromEntries(h.map((c,i)=>[c, r[i]])));
+          .map(r => Object.fromEntries(h.map((c,i)=>[c, janelas[i] ? normJanela_(r[i]) : r[i]])));
 }
 
 function appendObj_(nome, obj){
   const sh = sheet_(nome);
   const h = sh.getRange(1,1,1,sh.getLastColumn()).getValues()[0];
   sh.appendRow(h.map(c => obj[c] !== undefined ? obj[c] : ''));
+  /* As colunas de janela precisam permanecer texto: se a planilha as
+     converter em Date, a confirmação pelo e-mail deixa de achar a data. */
+  const linha = sh.getLastRow();
+  h.forEach((c, i) => {
+    if (COLS_JANELA.indexOf(c) >= 0) sh.getRange(linha, i+1).setNumberFormat('@');
+  });
 }
 
 function atualizarCampo(nome, colId, id, campo, valor){
@@ -212,14 +302,27 @@ function atualizarCampo(nome, colId, id, campo, valor){
   const ci = h.indexOf(colId), cf = h.indexOf(campo);
   if (ci < 0 || cf < 0) throw new Error('Coluna não encontrada: '+colId+'/'+campo);
   for (let i=1;i<v.length;i++){
-    if (String(v[i][ci]) === String(id)){ sh.getRange(i+1, cf+1).setValue(valor); return true; }
+    if (String(v[i][ci]) === String(id)){
+      const cel = sh.getRange(i+1, cf+1);
+      if (COLS_JANELA.indexOf(campo) >= 0) cel.setNumberFormat('@');
+      cel.setValue(valor);
+      return true;
+    }
   }
   return false;
 }
 
+/** Próximo id livre da aba. Conta de linhas não serve: uma exclusão
+ *  faria o próximo id repetir um que já existe. Lê o maior sufixo. */
 function proximoId_(aba, prefixo){
-  const n = lerAba(aba).length + 1;
-  return prefixo + ('000'+n).slice(-3);
+  const col = { Leads:'id_lead', Clientes:'id_cliente', Casos:'id_caso',
+                Documentos:'id_doc', Agendamentos:'id_agendamento' }[aba];
+  let maior = 0;
+  lerAba(aba).forEach(r => {
+    const m = String(col ? r[col] : '').match(/^[A-Z]+(\d+)$/);
+    if (m) maior = Math.max(maior, Number(m[1]));
+  });
+  return prefixo + ('000' + (maior + 1)).slice(-3);
 }
 
 /* ---------- Config ---------- */
@@ -261,7 +364,7 @@ function submitLead(p){
       relato = san_(cabec + (relato ? '\n\n' + relato : ''), 4000);
     }
     const lead = {
-      id_lead: proximoId_(ABAS.LEADS,'L'),
+      id_lead: '',                       // atribuído dentro da trava, logo abaixo
       data_entrada: new Date(),
       nome: san_(p.nome, 120), telefone: san_(p.telefone, 25), email: san_(p.email, 120),
       cidade: san_(p.cidade, 80), origem: san_(p.origem, 40), quem_indicou: san_(p.quem_indicou, 120),
@@ -269,17 +372,30 @@ function submitLead(p){
       ja_teve_negativa: /negado|cessado/i.test(p.situacao || '') ? 'Sim' : 'Não',
       tem_documentos: san_(p.tem_documentos, 40), urgencia: san_(p.urgencia, 40),
       relato: relato,
-      janela_1: san_(p.janela_1, 30), janela_2: san_(p.janela_2, 30), janela_3: san_(p.janela_3, 30),
+      janela_1: normJanela_(san_(p.janela_1, 30)),
+      janela_2: normJanela_(san_(p.janela_2, 30)),
+      janela_3: normJanela_(san_(p.janela_3, 30)),
       status_lead: 'Novo'
     };
     const s = calcularScore(lead);
     lead.score = s.score; lead.faixa = s.faixa;
-    appendObj_(ABAS.LEADS, lead);
-    appendObj_(ABAS.AGENDA, {
-      id_agendamento: proximoId_(ABAS.AGENDA,'A'), id_lead: lead.id_lead,
-      tipo:'Consulta inicial', janela_1: lead.janela_1, janela_2: lead.janela_2, janela_3: lead.janela_3,
-      status:'Aguardando escolha da advogada', lembrete_enviado:'Não'
-    });
+
+    /* Dois formulários enviados no mesmo instante gerariam o mesmo id.
+       A trava serializa a numeração e a gravação das duas abas. */
+    const trava = LockService.getScriptLock();
+    try {
+      trava.waitLock(20000);
+      lead.id_lead = proximoId_(ABAS.LEADS,'L');
+      appendObj_(ABAS.LEADS, lead);
+      appendObj_(ABAS.AGENDA, {
+        id_agendamento: proximoId_(ABAS.AGENDA,'A'), id_lead: lead.id_lead,
+        tipo:'Consulta inicial', janela_1: lead.janela_1, janela_2: lead.janela_2, janela_3: lead.janela_3,
+        status:'Aguardando escolha da advogada', lembrete_enviado:'Não'
+      });
+    } finally {
+      try { trava.releaseLock(); } catch(e){}
+    }
+
     notificarAdvogada_(lead, s);        // e-mail para ela, com os 3 horários clicáveis
     avisarLeadRecebido_(lead);          // acuse de recebimento para o cliente
     return { ok:true };
@@ -305,7 +421,8 @@ function notificarAdvogada_(lead, s){
     janelas.forEach((j, i) => {
       botoes += '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" ' +
         'style="margin:0 0 9px"><tr><td align="center" style="border-radius:10px;background:#52091c">' +
-        '<a href="' + base + '?page=confirmar&lead=' + lead.id_lead + '&j=' + (i+1) + '&k=' + tok +
+        '<a href="' + base + '?page=confirmar&lead=' + lead.id_lead + '&j=' + (i+1) +
+        '&s=' + assinarConfirmacao_(lead.id_lead, i+1) +
         '" style="display:block;padding:14px 18px;color:#FFFFFF;text-decoration:none;' +
         'font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;border-radius:10px">' +
         fmtJanelaCurta_(j) + '</a></td></tr></table>';
@@ -593,15 +710,19 @@ function getPainelData(){
 /** Painel: ela escolhe 1 das 3 janelas (D-003). */
 
 function escolherJanela(idLead, janela){
+  janela = normJanela_(janela);
+  if (!janela) return { ok:false, erro:'Horário inválido.' };
+  const cota = cotaDeEmailOk_(2);
   atualizarCampo(ABAS.LEADS,'id_lead', idLead, 'janela_escolhida', janela);
   atualizarCampo(ABAS.LEADS,'id_lead', idLead, 'status_lead', 'Agendado');
   atualizarCampo(ABAS.AGENDA,'id_lead', idLead, 'data_confirmada', janela);
   atualizarCampo(ABAS.AGENDA,'id_lead', idLead, 'status', 'Confirmado');
   const lead = lerAba(ABAS.LEADS).find(l => l.id_lead === idLead) || {};
   const cal   = criarEventoCalendar_(lead, janela);
-  const email = confirmarConsultaAoLead_(lead, janela);
-  const aviso = avisarAdvogadaAgendamento_(lead, janela, cal);
-  return { ok:true, calendario: cal, emailCliente: email, emailAdvogada: aviso };
+  const semCota = { ok:false, motivo:'cota diária de e-mail do Gmail esgotada' };
+  const email = cota ? confirmarConsultaAoLead_(lead, janela) : semCota;
+  const aviso = cota ? avisarAdvogadaAgendamento_(lead, janela, cal) : semCota;
+  return { ok:true, calendario: cal, emailCliente: email, emailAdvogada: aviso, cota: cota };
 }
 
 /** Mesma ação, disparada pelo link do e-mail. */
@@ -621,7 +742,7 @@ function confirmarPeloEmail_(idLead, n){
 
 function criarEventoCalendar_(lead, janela){
   try{
-    const partes = String(janela).split(' ');
+    const partes = normJanela_(janela).split(' ');
     if (partes.length < 2) return { ok:false, motivo:'formato de data inesperado: ' + janela };
     const inicio = new Date(partes[0] + 'T' + partes[1] + ':00');
     if (isNaN(inicio.getTime())) return { ok:false, motivo:'data inválida: ' + janela };
@@ -687,6 +808,19 @@ function salvarObservacaoLead(idLead, texto){
 function converterLead(idLead, dadosCliente){
   const lead = lerAba(ABAS.LEADS).find(l => l.id_lead === idLead);
   if (!lead) throw new Error('Lead não encontrado');
+
+  /* Um segundo clique em "Contratou" — por demora na resposta — criaria
+     um cliente duplicado, um segundo caso, outra pasta no Drive e um
+     checklist repetido. A conversão é feita uma vez só. */
+  if (lead.id_cliente){
+    const jaExiste = lerAba(ABAS.CLIENTES).find(c => c.id_cliente === lead.id_cliente);
+    if (jaExiste){
+      const caso = lerAba(ABAS.CASOS).find(c => c.id_cliente === lead.id_cliente) || {};
+      return { ok:true, jaConvertido:true, id_cliente: lead.id_cliente, id_caso: caso.id_caso || '',
+               pasta: jaExiste.link_pasta_drive || '', docs: 0, nome: jaExiste.nome_completo || lead.nome };
+    }
+  }
+
   const idCliente = proximoId_(ABAS.CLIENTES,'C');
   const pasta = criarPastaCliente((dadosCliente && dadosCliente.nome_completo) || lead.nome, idCliente);
   appendObj_(ABAS.CLIENTES, Object.assign({

@@ -153,7 +153,7 @@ footer{margin-top:auto;padding-top:36px}
 <body>
 <div class="envelope">
   <header>
-    <h1 id="nomeAdv">Dra. Poliana Espolador</h1>
+    <h1 id="nomeAdv"><?= advogada ?></h1>
     <p>Advocacia Previdenciária</p>
   </header>
   <section id="hero" class="hero">
@@ -174,7 +174,7 @@ footer{margin-top:auto;padding-top:36px}
       <p class="pergunta">Qual o melhor número para falar com você?</p>
       <p class="sub">Com DDD</p>
       <div class="campo"><input type="tel" id="f_telefone" placeholder="(41) 99999-9999" inputmode="numeric" autocomplete="tel" enterkeyhint="next"></div>
-      <p class="dica">Usado apenas pela Dra. Poliana para falar com você.</p>
+      <p class="dica">Usado apenas por <?= advogada ?> para falar com você.</p>
     </div>
     <div class="tela" data-t="2">
       <p class="pergunta">E o seu e-mail?</p>
@@ -242,7 +242,7 @@ footer{margin-top:auto;padding-top:36px}
     <!-- Horarios -->
     <div class="tela" data-t="13">
       <p class="pergunta">Quando fica bom para você?</p>
-      <p class="sub">Escolha até 3 opções. A Dra. Poliana confirma uma delas.</p>
+      <p class="sub">Escolha até 3 opções. <?= advogada ?> confirma uma delas.</p>
       <div class="sel-passo">
         <p class="rotulo-sec">1. Escolha o dia</p>
         <div class="dias" id="listaDias"></div>
@@ -251,7 +251,7 @@ footer{margin-top:auto;padding-top:36px}
         <div class="escolhidos" id="escolhidos"></div>
       </div>
       <p class="dica" style="margin-top:20px">Ao enviar, você concorda que estas informações sejam usadas
-        exclusivamente para a Dra. Poliana analisar seu caso e entrar em contato.</p>
+        exclusivamente para <?= advogada ?> analisar seu caso e entrar em contato.</p>
     </div>
     <div class="nav">
       <button class="btn-fantasma" id="btVoltar">Voltar</button>
@@ -261,7 +261,7 @@ footer{margin-top:auto;padding-top:36px}
   <section id="fim" class="fim oculto">
     <div class="marca">&#10003;</div>
     <h2>Recebido!</h2>
-    <p>Suas informações já estão com a Dra. Poliana.<br>Ela vai analisar o seu caso e entrar em contato.</p>
+    <p>Suas informações já estão com <?= advogada ?>.<br>Ela vai analisar o seu caso e entrar em contato.</p>
     <div class="resumo" id="resumoFinal"></div>
     <p class="dica" style="margin-top:18px">Se tiver documentos guardados, vá separando — sem pressa e sem organizar nada.</p>
     <button class="btn-fantasma" id="btVoltarInicio" style="margin-top:24px">Voltar ao início</button>
@@ -284,6 +284,9 @@ footer{margin-top:auto;padding-top:36px}
 /* 'inss' | 'servidor' | '' — vem do link usado (ver doGet no Code.gs) */
 
 var TIPO_PRESET = '<?= tipoPreset ?>';
+/* lido do cabeçalho já renderizado: evita qualquer problema de
+   escape caso o nome na Config traga apóstrofo ou acento. */
+var ADV = (document.getElementById('nomeAdv') || {}).textContent || 'o escritório';
 
 var OPCOES = {
   cidade:['Curitiba','São José dos Pinhais','Colombo','Pinhais','Araucária','Outra cidade'],
@@ -376,7 +379,7 @@ function carregarDisponibilidade(){
       DISPO = { fonte:'erro', dias:[] };
       box.innerHTML = '<p class="dica" style="margin:0;padding:12px 0">' +
         'Não consegui consultar a agenda agora. Envie assim mesmo — ' +
-        'a Dra. Poliana entra em contato para combinar o horário.</p>';
+        ADV + ' entra em contato para combinar o horário.</p>';
     })
     .horariosDisponiveis();
 }
@@ -387,7 +390,7 @@ function montarDias(){
   if (!DISPO || !DISPO.dias.length){
     box.innerHTML = '<p class="dica" style="margin:0;padding:12px 0">' +
       'Não há horários livres nas próximas semanas. Envie assim mesmo — ' +
-      'a Dra. Poliana entra em contato para combinar com você.</p>';
+      ADV + ' entra em contato para combinar com você.</p>';
     montarHoras();
     return;
   }
@@ -484,8 +487,8 @@ function precisa(v, titulo, texto){
 
 function valida(){
   var t = telasAtivas[indiceT];
-  if (t === 0) return precisa($('f_nome').value, 'Falta o seu nome', 'Como a Dra. Poliana deve chamar você?');
-  if (t === 1) return precisa($('f_telefone').value, 'Falta o telefone', 'É por ele que a Dra. Poliana entra em contato com você.');
+  if (t === 0) return precisa($('f_nome').value, 'Falta o seu nome', 'Como ' + ADV + ' deve chamar você?');
+  if (t === 1) return precisa($('f_telefone').value, 'Falta o telefone', 'É por ele que ' + ADV + ' entra em contato com você.');
   if (t === 2){
     var e = $('f_email').value.trim();
     if (!precisa(e, 'Falta o e-mail', 'É para lá que enviamos a confirmação do seu atendimento.')) return false;
@@ -500,12 +503,12 @@ function valida(){
     if (/Outra/.test(R.cidade)) return precisa($('f_cidade_outra').value, 'Qual cidade?', 'Digite o nome da sua cidade.');
     return true;
   }
-  if (t === 4) return precisa(R.origem, 'Escolha uma opção', 'Assim a Dra. Poliana sabe como você chegou até ela.');
+  if (t === 4) return precisa(R.origem, 'Escolha uma opção', 'Assim ' + ADV + ' sabe como você chegou até ela.');
   if (t === 5) return precisa(R.vinculo, 'Escolha uma opção', 'Isso define as próximas perguntas.');
   if (t === 6) return precisa(R.beneficio, 'Escolha uma opção', 'Se não souber ao certo, marque "Outros".');
   if (t === 7) return precisa(R.situacao, 'Escolha uma opção', 'Marque a frase mais próxima da sua situação.');
   if (t === 8) return precisa(R.tem_documentos, 'Escolha uma opção', 'Tudo bem não ter nada ainda.');
-  if (t === 9) return precisa(R.urgencia, 'Escolha uma opção', 'Isso ajuda a Dra. Poliana a organizar os atendimentos.');
+  if (t === 9) return precisa(R.urgencia, 'Escolha uma opção', 'Isso ajuda ' + ADV + ' a organizar os atendimentos.');
   if (t === 11){
     if (!precisa(R.esfera, 'Escolha uma opção', 'Federal, Estadual ou Municipal.')) return false;
     if (/Estadual|Municipal/.test(R.esfera))
@@ -571,7 +574,7 @@ function enviar(){
       if (r && r.ok){ concluir(); }
       else {
         dialogo({ tipo:'erro', titulo:'Não consegui enviar',
-          texto:'Ocorreu um erro ao registrar seus dados. Tente novamente — se persistir, avise a Dra. Poliana.' +
+          texto:'Ocorreu um erro ao registrar seus dados. Tente novamente — se persistir, avise ' + ADV + '.' +
                 (r && r.erro ? '<br><br><span style="font-size:12px;opacity:.7">' + r.erro + '</span>' : '') });
       }
     })

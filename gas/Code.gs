@@ -1,6 +1,6 @@
 /** ============================================================
  * Code.gs · Roteamento e camada de dados
- * Projeto: Opus AI · Dra. Poliana Espolador · Fase 1
+ * Projeto: Opus AI · Poliana Espolador · Fase 1
  * A planilha ativa (container-bound) é o banco de dados.
  * ============================================================ */
 
@@ -16,7 +16,7 @@ function doGet(e){
   const page = p.page || 'lp';
   if (page === 'painel'){
     if (!acessoPainelOk_(e)) return htmlSimples_('Acesso restrito',
-      'Este painel é de uso exclusivo do escritório. Se você é a Dra. Poliana, use o seu link pessoal.');
+      'Este painel é de uso exclusivo do escritório. Se ele é seu, use o seu link pessoal.');
     return render_('Painel', 'Painel · ' + cfg('ESCRITORIO_ADVOGADA'));
   }
   /* Confirmação de horário direto pelo e-mail que ela recebe.
@@ -42,6 +42,10 @@ function doGet(e){
 function render_(arquivo, titulo, extras){
   const t = HtmlService.createTemplateFromFile(arquivo);
   t.tipoPreset = (extras && extras.tipoPreset) || '';
+  /* O nome de exibição vive só na Config. Ela pediu na reunião de 25/08
+     para tirar o "Dra."; trocar em 16 lugares no HTML garantia que a
+     próxima mudança de tratamento voltasse a ser um caça-palavras. */
+  t.advogada = cfg('ESCRITORIO_ADVOGADA') || 'Poliana Espolador';
   return t.evaluate()
     .setTitle(titulo)
     .addMetaTag('viewport','width=device-width, initial-scale=1')
@@ -473,7 +477,7 @@ function notificarAdvogada_(lead, s){
 function avisarLeadRecebido_(lead){
   try{
     if (!lead.email) return;
-    const adv = cfg('ESCRITORIO_ADVOGADA') || 'Dra. Poliana Espolador';
+    const adv = cfg('ESCRITORIO_ADVOGADA') || 'Poliana Espolador';
     const primeiro = String(lead.nome || '').split(' ')[0];
     const janelas = [lead.janela_1, lead.janela_2, lead.janela_3].filter(Boolean);
     const html = EMAIL_ABRE +
@@ -521,7 +525,7 @@ function avisarLeadRecebido_(lead){
 function confirmarConsultaAoLead_(lead, janela){
   try{
     if (!lead || !lead.email) return { ok:false, motivo:'lead sem e-mail' };
-    const adv = cfg('ESCRITORIO_ADVOGADA') || 'Dra. Poliana Espolador';
+    const adv = cfg('ESCRITORIO_ADVOGADA') || 'Poliana Espolador';
     const primeiro = String(lead.nome || '').split(' ')[0];
     const dur = cfgNum('CONSULTA_DURACAO_MIN') || 30;
     const html = EMAIL_ABRE +

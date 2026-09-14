@@ -59,3 +59,56 @@ que já usa — zero curva de aprendizado, zero conflito de plataforma.
 O modelo previa 7 abas. Os checklists de documentos por benefício (os PDFs que ela já mantém) têm
 cardinalidade própria — dezenas de linhas por benefício — e seriam ilegíveis dentro da Config.
 Viram a 8ª aba. Ela edita a lista de documentos sem tocar em parâmetro de sistema.
+
+### D-009 · Verde-azulado no lugar do verde no semáforo de estado
+**Data:** 14/09/2026 · **Status:** decidido
+Ela é sensível a cores e pediu que o estado do caso fosse legível de relance.
+O semáforo óbvio — verde, amarelo, vermelho — foi medido e reprovado: verde e
+vermelho ficam a ΔE 6,0 sob deuteranopia, ou seja, para quem tem daltonismo
+vermelho-verde (~8% dos homens) "resolvido" e "urgente" são praticamente a
+mesma cor. Trocar o verde por verde-azulado leva esse par a ΔE 12,5 e faz a
+paleta passar nos cinco testes. Nenhuma cor informa sozinha de qualquer forma:
+todo estado vem com ícone e palavra. Não é preferência estética — é a diferença
+entre um painel que avisa e um painel que parece avisar.
+
+### D-010 · Prioridade e estado em escalas que não se tocam
+**Data:** 14/09/2026 · **Status:** decidido
+São duas perguntas diferentes: "quem é mais importante" (faixa do lead) e "o
+que está travado" (estado do caso). Usar a mesma família de cores nas duas faria
+uma etiqueta de prioridade ser lida como aviso de prazo. Prioridade virou uma
+rampa ordinal do próprio vinho da marca, clareando em quatro degraus; estado é o
+semáforo. Nenhum tom aparece nas duas escalas.
+
+### D-011 · Quadradinho por caso enquanto o volume é pequeno
+**Data:** 14/09/2026 · **Status:** decidido
+O gráfico de casos por fase começou como barra proporcional. Com cinco fases de
+um caso cada — a carteira real dela hoje — as cinco barras encostavam no fim da
+régua e o gráfico dizia "tudo cheio" para cinco casos. Até doze casos numa fase,
+um quadrado por caso: é exato e dá para conferir contando. Acima disso, a barra
+passa a ser mais legível e entra no lugar.
+
+### D-012 · Netlify como redirecionador, nunca como hospedeiro
+**Data:** 14/09/2026 · **Status:** decidido
+A ideia era subir a plataforma no Netlify para ter um link apresentável na
+mensagem do WhatsApp. Não é possível: a LP é montada no servidor pelo Apps
+Script e o formulário envia por `google.script.run`, que só existe dentro da
+página servida pelo próprio Apps Script — fora dali o botão Enviar não faz nada.
+Junto iriam SpreadsheetApp, GmailApp, CalendarApp e DriveApp. Reescrever para
+lá custaria banco hospedado, servidor de e-mail e assinatura mensal, contra o
+compromisso de custo zero.
+O Netlify entra em outro papel: um site de um arquivo só, com um `_redirects`
+que aponta o subdomínio dela para a URL da implantação. Link bonito, código
+privado, R$ 0. GitHub Pages foi descartado pelo mesmo motivo técnico e por um
+segundo: publicar a partir do repositório exporia o código-fonte do produto.
+
+### D-013 · A titularidade exige transferir a planilha, não só compartilhar
+**Data:** 14/09/2026 · **Status:** decidido, bloqueante
+Compartilhar a agenda e a pasta CLIENTES não transfere a plataforma. A planilha
+— que é o banco de dados inteiro — e o Apps Script vinculado a ela continuam na
+conta pessoal da Opus AI. Enquanto for assim: os e-mails ao cliente saem da
+conta da Opus AI (`ESCRITORIO_EMAIL` muda o texto, não o remetente), a cota de
+100 e-mails/dia é da Opus AI, e os arquivos criados na pasta dela são de
+propriedade da Opus AI. Isso contraria o princípio nº 4 do projeto e não é algo
+para descobrir depois de assinar o contrato de administração.
+A transferência de propriedade da planilha resolve os quatro pontos de uma vez,
+porque o script passa a executar como ela. Passo a passo em `docs/06`.

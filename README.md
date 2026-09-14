@@ -2,7 +2,7 @@
 
 **Cliente:** Poliana Espolador Bilk Sociedade Individual de Advocacia (CNPJ 51.570.502/0001-99) — Curitiba/PR
 **Consultoria:** Opus AI — João Rocha
-**Fase atual:** Fase 1 — Setup
+**Fase atual:** Fase 1 — homologação / passagem de titularidade
 **Repositório:** privado. Não contém dados reais de clientes finais.
 
 ---
@@ -56,7 +56,9 @@ opusai-poliana/
 │   ├── 02-modelo-dados.md          Dicionário de dados das 8 abas
 │   ├── 03-scoring.md               Algoritmo de classificação de leads
 │   ├── 04-integracao-astrea.md     Como conviver com o Astrea sem redundância
-│   └── 05-seguranca-lgpd.md        Garantia de confidencialidade
+│   ├── 05-seguranca-lgpd.md        Garantia de confidencialidade
+│   ├── 06-passagem-de-titularidade.md  Como a plataforma passa a ser dela
+│   └── 07-link-publico.md          O link curto para a mensagem do WhatsApp
 ├── data/                      ← CSVs de seed (personagens fictícios) para importar no Sheets
 ├── config/                    ← parâmetros editáveis (pesos, fases, benefícios, templates)
 ├── gas/                       ← código Apps Script (fonte da verdade; o editor GAS é deploy)
@@ -72,8 +74,26 @@ opusai-poliana/
 - [x] Modelo de dados definido
 - [x] Personagens fictícios (10) para demonstração
 - [x] Algoritmo de scoring
-- [ ] Abas criadas e populadas na planilha
-- [ ] LP de intake
-- [ ] Painel v1 + tour guiado
-- [ ] Apresentação à Dra. Poliana
-- [ ] Homologação
+- [x] Abas criadas e populadas na planilha
+- [x] LP de intake
+- [x] Painel v1 + tour guiado
+- [x] Agendamento com leitura real do Google Calendar
+- [x] Apresentação ao escritório (25/08, com ela conduzindo a tela)
+- [x] Repositório sincronizado com a versão implantada
+- [x] Auditoria de defeitos antes da entrega
+- [x] Color coding de estado e reforma da diagramação
+- [ ] **Transferência da planilha para a conta dela** — ver `docs/06`
+- [ ] Dados de demonstração limpos e `MODO_DEMO` = `NAO`
+- [ ] `ESCRITORIO_WHATSAPP` com o número real
+- [ ] `PAINEL_TOKEN` regenerado
+- [ ] Link curto publicado — ver `docs/07`
+- [ ] Mensagem automática do WhatsApp configurada por ela
+- [ ] Homologação assinada
+
+### Pendências que dependem do escritório
+
+| O que | De quem |
+|---|---|
+| Número de WhatsApp em E.164 | dela |
+| Aceitar a transferência da planilha e autorizar o script | dela |
+| Subdomínio para o link curto | dela |

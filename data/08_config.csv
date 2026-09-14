@@ -2,8 +2,8 @@ chave,valor,descricao
 ESCRITORIO_NOME,Poliana Espolador Bilk Sociedade Individual de Advocacia,Razão social
 ESCRITORIO_ADVOGADA,Poliana Espolador,Nome de exibição
 ESCRITORIO_CIDADE,Curitiba/PR,Praça de atuação
-ESCRITORIO_EMAIL,contato@exemplo.com,⚠ SUBSTITUIR pelo e-mail real
-ESCRITORIO_WHATSAPP,+5541999000000,⚠ SUBSTITUIR pelo número real (formato E.164)
+ESCRITORIO_EMAIL,polianaespoladoradvocacia@gmail.com,Conta do escritório. Remetente e destinatário dos avisos internos
+ESCRITORIO_WHATSAPP,5541999999999,"SUBSTITUIR pelo número real dela, formato E.164 (55 + DDD + número)"
 HORARIO_ATENDIMENTO,"Seg a Sex, 9h-18h",Exibido na LP
 PESO_NEGATIVA,30,Benefício requerido e negado
 PESO_CESSADO,30,Benefício cessado
@@ -23,7 +23,17 @@ SLA_PRIORITARIO,24,Horas para responder um lead prioritário
 SLA_QUALIFICADO,72,Horas para responder um lead qualificado
 BENEFICIOS_ALTO_VALOR,Aposentadoria por idade urbana|Aposentadoria por tempo de contribuição (híbrida)|Aposentadoria especial|Auxílio por incapacidade temporária|BPC/LOAS - Pessoa com deficiência|Pensão por morte,Separados por |
 FASES,Consulta agendada|Coleta de documentos|Protocolado - aguardando análise|Aguardando perícia médica|Exigência de documentação|Em análise de cálculo|Deferido - implantação|Indeferido - avaliando recurso|Judicial - ajuizado|Encerrado,Etiquetas espelhando o Astrea
-DRIVE_PASTA_RAIZ,ID_DA_PASTA_RAIZ,⚠ Preencher com o ID da pasta raiz no Drive
+DRIVE_PASTA_RAIZ,1paMRgx5Xp0aR0XFS8V7LQBnaWU0D33z8,"Pasta CLIENTES no Drive dela, compartilhada em 03/09"
 RODAPE_LGPD,"Seus dados permanecem na infraestrutura do escritório, protegidos nos termos da LGPD, e não são enviados a sistemas de inteligência artificial.","Texto fixo em LP, painel e e-mails"
-PAINEL_TOKEN,TROCAR-POR-TOKEN-LONGO-E-ALEATORIO,⚠ Token do painel (?page=painel&k=...). Gerar um valor aleatório longo antes do go-live
-MODO_DEMO,SIM,SIM = dados fictícios e tour guiado ativo. Mudar para NAO na homologação.
+PAINEL_TOKEN,TROCAR_ANTES_DO_GO_LIVE,GERAR NOVO: o token atual circulou por e-mail e pelo documento de acompanhamento
+MODO_DEMO,NAO,SIM = dados fictícios e tour automático. NAO a partir da homologação
+EMAIL_COPIA,jr.conductor83@gmail.com,Cópia oculta de acompanhamento durante a homologação. Esvaziar quando encerrar
+CALENDAR_ID,polianaespoladoradvocacia@gmail.com,"Agenda dela (confirmado via API em 14/09). ""primary"" = agenda de quem executa o script"
+AGENDA_HORARIOS,09:00|10:00|11:00|14:00|15:00|16:00|17:00,"Grade oferecida na LP, separada por |"
+AGENDA_DIAS,14,Quantos dias úteis à frente a LP oferece
+AGENDA_ANTECEDENCIA_H,12,"Antecedência mínima, em horas, para um horário aparecer"
+CONSULTA_DURACAO_MIN,30,"Duração da consulta inicial, em minutos"
+LEMBRETE_POPUP_MIN,30,"Lembrete no app do Google Agenda, minutos antes"
+LEMBRETE_EMAIL_MIN,1440,"Lembrete por e-mail, minutos antes (1440 = 24 h)"
+MODO_TESTE,SIM,SIM = envia cópia dos e-mails para MODO_TESTE_EMAIL
+MODO_TESTE_EMAIL,jr.conductor83@gmail.com,Quem recebe as cópias durante a homologação

@@ -84,6 +84,33 @@ Os links de confirmação de horário nos e-mails **não usam mais o token**: pa
 a levar uma assinatura válida só para aquele contato e aquele horário. Encaminhar
 um desses e-mails não entrega mais o painel junto.
 
+### Como ela entra no painel
+
+O link do painel existia **só dentro dos e-mails de contato novo**. Numa semana
+sem nenhum lead não havia porta: ela teria de caçar um e-mail antigo para abrir
+a própria plataforma. O painel é dela, e não uma consequência dos clientes.
+
+Agora a planilha tem um menu **Opus AI**, que aparece toda vez que o arquivo é
+aberto:
+
+| Item | O que faz |
+|---|---|
+| **Abrir o painel** | Abre o painel numa aba nova, já com o token |
+| **Copiar os links** | Mostra os dois links — o do formulário, para divulgar, e o do painel, que é só dela |
+| **Verificar a instalação** | Roda o diagnóstico e mostra o resultado numa caixa |
+| **Gerar novo token do painel** | Troca o token e devolve o link novo |
+
+Três caminhos, então, e nenhum deles depende de e-mail:
+
+1. O menu da planilha — sempre à mão, é o arquivo que ela já abre
+2. O favorito do navegador — a partir de *Abrir o painel*
+3. No celular: abrir uma vez e usar **"Adicionar à tela de início"**, que deixa
+   o painel com ícone próprio, como um aplicativo
+
+E quando não há nenhum contato ainda, o painel deixa de mostrar quatro zeros e
+passa a mostrar a página de captação dela com um botão de copiar — que é a única
+coisa útil a dizer numa tela vazia.
+
 ## Passo 3 — Limpar os dados de demonstração
 
 Antes de entregar, apagar as linhas de teste das abas `Leads`, `Clientes`,

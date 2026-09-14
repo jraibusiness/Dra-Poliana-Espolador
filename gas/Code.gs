@@ -705,7 +705,10 @@ function getPainelData(){
     checklists: lerAba(ABAS.CHECK),
     config: {
       advogada: cfg('ESCRITORIO_ADVOGADA'), fases: cfgLista('FASES'),
-      rodapeLgpd: cfg('RODAPE_LGPD'), modoDemo: cfg('MODO_DEMO') === 'SIM',
+      modoDemo: cfg('MODO_DEMO') === 'SIM',
+      /* O link público, para o painel poder mostrá-lo quando ainda não há
+         nenhum contato — é a única coisa útil a dizer numa tela vazia. */
+      linkFormulario: urlApp_(),
       sla: { prior: cfgNum('SLA_PRIORITARIO'), qual: cfgNum('SLA_QUALIFICADO') }
     }
   };
@@ -874,4 +877,118 @@ function verificarInstalacao(){
   out.push('Link do painel: ' + urlApp_() + '?page=painel&k=' + cfg('PAINEL_TOKEN'));
   Logger.log(out.join('\n'));
   return out.join('\n');
+}
+
+/* ============================================================
+ * ENTRADA PERMANENTE PARA O PAINEL
+ *
+ * O link do painel existia só dentro dos e-mails de contato novo.
+ * Numa semana sem nenhum lead, não havia porta: ela teria de caçar
+ * um e-mail antigo para abrir a própria plataforma. Isso está errado —
+ * o painel é dela, e não uma consequência dos clientes.
+ *
+ * A porta certa é a planilha, que ela tem sempre à mão: um menu
+ * próprio, presente toda vez que o arquivo abre.
+ * ============================================================ */
+
+function onOpen(){
+  SpreadsheetApp.getUi()
+    .createMenu('Opus AI')
+    .addItem('Abrir o painel', 'abrirPainel')
+    .addItem('Copiar os links', 'mostrarLinks')
+    .addSeparator()
+    .addItem('Verificar a instalação', 'mostrarDiagnostico')
+    .addItem('Gerar novo token do painel', 'renovarTokenDoPainel')
+    .addToUi();
+}
+
+/** Link do painel, com o token da Config. */
+function linkPainel_(){
+  const base = urlApp_();
+  const tok = cfg('PAINEL_TOKEN');
+  return (base && tok) ? base + '?page=painel&k=' + encodeURIComponent(tok) : '';
+}
+
+function linkFormulario_(){
+  return urlApp_();
+}
+
+/** Abre o painel numa aba nova. O clique tem de partir do usuário:
+ *  window.open() disparado sozinho é bloqueado como pop-up. */
+function abrirPainel(){
+  const url = linkPainel_();
+  const ui = SpreadsheetApp.getUi();
+  if (!url){
+    ui.alert('Painel indisponível',
+      'Falta publicar o aplicativo ou preencher PAINEL_TOKEN na aba Config.\n\n' +
+      'Implantar → Gerenciar implantações → Nova versão.', ui.ButtonSet.OK);
+    return;
+  }
+  const html = HtmlService.createHtmlOutput(
+    '<style>body{font-family:system-ui,sans-serif;color:#1E293B;text-align:center;padding:26px 18px;margin:0}' +
+    'a.b{display:block;background:#52091c;color:#fff;text-decoration:none;padding:15px 20px;' +
+    'border-radius:10px;font-weight:600;font-size:15px}' +
+    'p{color:#64748B;font-size:13.5px;line-height:1.6;margin:16px 0 0}</style>' +
+    '<a class="b" href="' + url + '" target="_blank" rel="noopener">Abrir o painel &rarr;</a>' +
+    '<p>Guarde esta aba nos favoritos. No celular, use<br>"Adicionar à tela de início".</p>')
+    .setWidth(330).setHeight(180);
+  ui.showModalDialog(html, 'Painel');
+}
+
+/** Os dois links do escritório, prontos para copiar. */
+function mostrarLinks(){
+  const ui = SpreadsheetApp.getUi();
+  const painel = linkPainel_(), form = linkFormulario_();
+  if (!form){
+    ui.alert('Ainda não publicado',
+      'Implantar → Gerenciar implantações → Nova versão.', ui.ButtonSet.OK);
+    return;
+  }
+  const caixa = (rot, val, aviso) =>
+    '<p style="margin:18px 0 6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;' +
+    'color:#94A3B8;font-weight:700">' + rot + '</p>' +
+    '<textarea readonly onclick="this.select()" style="width:100%;height:62px;font-size:12px;' +
+    'font-family:ui-monospace,monospace;padding:9px;border:1.5px solid #E2E8F0;border-radius:8px;' +
+    'resize:none;color:#1E293B">' + val + '</textarea>' +
+    (aviso ? '<p style="margin:5px 0 0;font-size:12px;color:#9F1239">' + aviso + '</p>' : '');
+
+  const html = HtmlService.createHtmlOutput(
+    '<div style="font-family:system-ui,sans-serif;padding:4px 2px 12px">' +
+    caixa('Formulário — divulgue este', form,
+          'Pode ir no WhatsApp, no Instagram e no site.') +
+    caixa('Painel — só seu', painel,
+          'Não encaminhe: quem tem este link vê os dados de todos os clientes.') +
+    '<p style="margin:18px 0 0;font-size:12.5px;color:#64748B;line-height:1.6">' +
+    'Toque no texto para selecionar e copiar.</p></div>')
+    .setWidth(430).setHeight(360);
+  ui.showModalDialog(html, 'Links do escritório');
+}
+
+function mostrarDiagnostico(){
+  const ui = SpreadsheetApp.getUi();
+  ui.alert('Verificação da instalação', verificarInstalacao(), ui.ButtonSet.OK);
+}
+
+/** Troca o token do painel e grava na Config. Usar quando o link
+ *  tiver circulado por engano — o antigo para de funcionar na hora. */
+function renovarTokenDoPainel(){
+  const ui = SpreadsheetApp.getUi();
+  const r = ui.alert('Gerar um token novo?',
+    'O link atual do painel para de funcionar imediatamente. ' +
+    'Você recebe o novo link em seguida, para guardar nos favoritos.\n\n' +
+    'Os botões de horário dos e-mails já enviados também deixam de valer — ' +
+    'eles são assinados com o token. Confirme esses horários pelo painel.',
+    ui.ButtonSet.YES_NO);
+  if (r !== ui.Button.YES) return;
+
+  const letras = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  let novo = '';
+  for (let i = 0; i < 32; i++) novo += letras.charAt(Math.floor(Math.random() * letras.length));
+
+  if (!atualizarCampo(ABAS.CONFIG, 'chave', 'PAINEL_TOKEN', 'valor', novo)){
+    ui.alert('Não encontrei a linha PAINEL_TOKEN na aba Config.');
+    return;
+  }
+  _cfgCache = null;          // senão o link sairia com o token antigo
+  mostrarLinks();
 }

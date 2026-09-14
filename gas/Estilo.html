@@ -303,6 +303,25 @@ button{font-family:var(--font-corpo);cursor:pointer;border:none}
 .gr-legenda span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)}
 .gr-legenda i{width:9px;height:9px;border-radius:3px;flex:none;font-style:normal}
 
+/* ===============================================================
+   ESCRITÓRIO SEM MOVIMENTO
+   Primeira tela de quem abre o painel numa semana vazia.
+   =============================================================== */
+.comecar{background:var(--bg-card);border:1px solid var(--borda);border-radius:var(--raio-lg);
+  padding:26px 22px;box-shadow:var(--sombra);margin-top:6px}
+.comecar h2{font-size:20px;color:var(--text-main);margin-bottom:10px}
+.comecar p{color:var(--text-muted);font-size:15px;line-height:1.65}
+.comecar .rot-link{font-family:var(--font-util);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text-muted);margin:24px 0 9px}
+.comecar .dica-link{font-size:13.5px;margin-top:12px}
+
+/* Campo + botão: lado a lado quando cabe, empilhados no celular. */
+.caixa-link{display:flex;gap:8px;flex-wrap:wrap}
+.caixa-link input{flex:1 1 220px;min-width:0;font-size:14px;
+  font-family:var(--font-util);color:var(--text-main);background:var(--bg-app)}
+.caixa-link .btn{flex:0 0 auto}
+@media(max-width:420px){ .caixa-link .btn{flex:1 1 100%} }
+
 .oculto{display:none!important}
 
 @media (prefers-reduced-motion:reduce){

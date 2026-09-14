@@ -112,3 +112,21 @@ propriedade da Opus AI. Isso contraria o princípio nº 4 do projeto e não é a
 para descobrir depois de assinar o contrato de administração.
 A transferência de propriedade da planilha resolve os quatro pontos de uma vez,
 porque o script passa a executar como ela. Passo a passo em `docs/06`.
+
+### D-014 · O aviso de LGPD sai do painel
+**Data:** 14/09/2026 · **Status:** decidido
+O rodapé "seus dados permanecem na infraestrutura do escritório" é uma promessa
+feita AO CLIENTE, sobre os dados DELE. No painel, ela estava lendo uma garantia
+dirigida a outra pessoa, em toda tela. Sai do painel; continua onde tem
+destinatário: na página de captação, nos e-mails ao cliente e no relatório em PDF.
+
+### D-015 · O painel tem porta própria, independente dos clientes
+**Data:** 14/09/2026 · **Status:** decidido
+O link do painel só existia dentro dos e-mails de contato novo. Numa semana sem
+leads não havia como entrar sem caçar um e-mail antigo — a plataforma dela ficava
+condicionada a ter clientes. A porta certa é a planilha, que ela tem sempre
+aberta: um menu "Opus AI" com abrir o painel, copiar os links, rodar o
+diagnóstico e trocar o token. Daí ela guarda nos favoritos ou põe na tela de
+início do celular. E o painel sem nenhum contato deixou de mostrar quatro zeros:
+mostra a página de captação com botão de copiar, que é o que resolve uma tela
+vazia.

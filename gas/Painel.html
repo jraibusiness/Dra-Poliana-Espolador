@@ -15,14 +15,35 @@
 .topo .util{color:var(--text-muted);font-size:11px;letter-spacing:.08em;
   background:var(--p2-bg);color:var(--p2);padding:4px 9px;border-radius:99px;font-weight:700}
 
+/* 44px é o alvo de toque mínimo recomendado no celular; 36px obrigava
+   a mirar. Vale para o único botão fixo do cabeçalho. */
 #btnTour{background:var(--primary-08);color:var(--primary);border:1.5px solid var(--primary-16);
-  border-radius:50%;width:36px;height:36px;font-size:16px;font-weight:700;flex:none;
+  border-radius:50%;width:44px;height:44px;font-size:17px;font-weight:700;flex:none;
   display:grid;place-items:center;cursor:pointer}
 
 #btnTour:hover{background:var(--primary-16)}
 nav.abas{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;background:var(--bg-header);
   border-bottom:1px solid var(--borda);position:sticky;top:60px;z-index:49;
   -webkit-overflow-scrolling:touch;scrollbar-width:none}
+
+/* No celular a última aba ficava cortada na borda, sem nada indicando que
+   a faixa rola — lia-se como defeito. O esmaecimento à direita é o aviso. */
+nav.abas{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent);
+         mask-image:linear-gradient(to right,#000 calc(100% - 26px),transparent)}
+
+/* Rótulo curto só onde o longo não caberia. */
+nav.abas .curto{display:none}
+@media(max-width:430px){
+  nav.abas{gap:5px;padding:10px}
+  nav.abas button{padding:9px 13px;font-size:14px}
+  nav.abas .longo{display:none}
+  nav.abas .curto{display:inline}
+}
+/* iPhone SE e afins: as quatro abas ainda cabem inteiras com um aperto. */
+@media(max-width:375px){
+  nav.abas{gap:4px;padding:10px 6px}
+  nav.abas button{padding:9px 11px;font-size:13.5px}
+}
 nav.abas::-webkit-scrollbar{display:none}
 nav.abas button{white-space:nowrap;padding:9px 16px;background:#fff;color:var(--text-muted);
   border:1.5px solid var(--borda);border-radius:99px;font-size:14.5px;font-weight:500;min-height:40px}
@@ -133,15 +154,12 @@ h2.sec{font-size:17px;margin-bottom:12px;color:var(--text-main)}
 <nav class="abas" id="abas">
   <button data-aba="hoje" class="sel">Hoje</button>
   <button data-aba="leads">Leads</button>
-  <button data-aba="casos">Clientes &amp; Casos</button>
+  <button data-aba="casos"><span class="longo">Clientes &amp; Casos</span><span class="curto">Clientes</span></button>
   <button data-aba="docs">Documentos</button>
 </nav>
 <main id="conteudo">
   <div class="carregando-bloco"><div class="spinner"></div><p>Carregando o seu painel…</p></div>
 </main>
-<div class="lgpd" style="max-width:900px;margin:0 auto 30px;padding:20px 16px 0">
-  &#128274; <span id="lgpdTxt"></span>
-</div>
 <div id="zonaModal"></div>
 <?!= include('Tour'); ?>
 
@@ -222,7 +240,6 @@ google.script.run
 
 function boot(){
   $('tituloPainel').textContent = 'Painel · ' + DB.config.advogada;
-  $('lgpdTxt').textContent = DB.config.rodapeLgpd;
   if (DB.config.modoDemo){
     $('modoDemoTag').textContent = 'DEMONSTRAÇÃO';
     $('modoDemoTag').classList.remove('oculto');
@@ -322,7 +339,45 @@ function graficoFases(){
     '<div class="gr-legenda">' + legenda + '</div></div></section>';
 }
 
+/** Escritório ainda sem movimento: nenhum contato, nenhum cliente.
+ *  Três seções dizendo "nada aqui" não ajudam ninguém. O que ela precisa
+ *  nessa tela é do link para divulgar — e dele à mão, não num e-mail antigo. */
+function vComecar(){
+  const link = (DB.config && DB.config.linkFormulario) || '';
+  return '<section class="comecar">' +
+    '<h2>Tudo pronto para o primeiro contato.</h2>' +
+    '<p>Ainda não chegou ninguém pela sua página. Quando chegar, aparece aqui — ' +
+    'com a prioridade calculada e os horários que a pessoa sugeriu.</p>' +
+    (link
+      ? '<p class="rot-link">Sua página de captação</p>' +
+        '<div class="caixa-link">' +
+          '<input id="linkLP" type="text" readonly value="' + esc(link) + '" ' +
+            'onclick="this.select()" aria-label="Link da sua página de captação">' +
+          '<button class="btn" id="btCopiar" onclick="copiarLink()">Copiar</button>' +
+        '</div>' +
+        '<p class="dica-link">Coloque na mensagem automática do WhatsApp, na bio do ' +
+        'Instagram e no seu site. É por aqui que os contatos entram.</p>'
+      : '<p class="dica-link">O link aparece aqui assim que o aplicativo for publicado.</p>') +
+  '</section>';
+}
+
+function copiarLink(){
+  const c = $('linkLP'), b = $('btCopiar');
+  if (!c) return;
+  c.select(); c.setSelectionRange(0, 99999);        // iOS precisa do intervalo
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e){}
+  if (navigator.clipboard) { try { navigator.clipboard.writeText(c.value); ok = true; } catch(e){} }
+  if (b){
+    b.textContent = ok ? 'Copiado' : 'Selecionado';
+    setTimeout(() => { b.textContent = 'Copiar'; }, 2200);
+  }
+}
+
 function vHoje(){
+  /* Base inteiramente vazia: mostra o caminho, não quatro zeros. */
+  if (!DB.leads.length && !DB.clientes.length && !DB.casos.length) return vComecar();
+
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const em7 = new Date(hoje); em7.setDate(em7.getDate()+7);
   const acoes = DB.casos.filter(cs => cs.data_proxima_acao && new Date(cs.data_proxima_acao) <= em7 && cs.fase!=='Encerrado')
